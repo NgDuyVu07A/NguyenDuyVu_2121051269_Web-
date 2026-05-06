@@ -1,0 +1,376 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Electro - {{ product.name }}</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/bootstrap.min.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/slick.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/slick-theme.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/nouislider.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'home/css/font-awesome.min.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/style.css' %}" />
+
+    <style>
+        /* CSS BO GÓC THANH TÌM KIẾM ĐỒNG BỘ TRANG CHỦ */
+        .header-search form .input {
+            border-radius: 40px 0px 0px 40px !important;
+            width: calc(100% - 100px) !important;
+            padding: 0px 20px !important;
+        }
+
+        .header-search form .search-btn {
+            border-radius: 0px 40px 40px 0px !important;
+            width: 100px !important;
+        }
+
+        /* CSS phụ cho phần Review hiển thị đẹp hơn */
+        .review-heading { margin-bottom: 5px; }
+        .review-heading h5 { display: inline-block; margin-right: 15px; margin-top: 0;}
+        .review-heading .date { color: #999; font-size: 12px; display: inline-block; margin-right: 15px;}
+        .review-rating { display: inline-block; color: #D10024; }
+        .review-rating .empty { color: #E4E7ED; }
+        .review-body { margin-bottom: 20px; }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header>
+        <div id="top-header">
+            <div class="container">
+                <ul class="header-links pull-right">
+                    {% if user.is_authenticated %}
+                    <li><a href="#"><i class="fa fa-user"></i> Xin chào, {{ user.username }}</a></li>
+                    <li style="display:inline-block;">
+                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit"
+                                style="background:none; border:none; color:#fff; font-size:12px; cursor: pointer;">
+                                <i class="fa fa-sign-out"></i> Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}"><i class="fa fa-user"></i> Đăng nhập</a></li>
+                    <li><a href="{% url 'register' %}"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div id="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="header-logo">
+                            <a href="/" class="logo">
+                                <img src="{% static 'home/img/logo.png' %}" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="header-search">
+                            <form action="/" method="GET">
+                                <input class="input" name="q" placeholder="Săn Deal hời ngay...">
+                                <button class="search-btn" type="submit">Tìm kiếm</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-3 clearfix">
+                        <div class="header-ctn">
+                            <div>
+                                <a href="{% url 'cart' %}">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Giỏ hàng</span>
+                                </a>
+                            </div>
+                            <div class="menu-toggle">
+                                <a href="#">
+                                    <i class="fa fa-bars"></i>
+                                    <span>Menu</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav id="navigation">
+        <div class="container">
+            <div id="responsive-nav">
+                <ul class="main-nav nav navbar-nav">
+                    <li><a href="/">Trang chủ</a></li>
+                    <li><a href="#">Khuyến mãi Hot</a></li>
+                    <li><a href="#">Danh mục</a></li>
+                    <li><a href="#">Laptop</a></li>
+                    <li><a href="#">Điện thoại</a></li>
+                    <li><a href="#">Máy ảnh</a></li>
+                    <li><a href="#">Phụ kiện</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- BREADCRUMB -->
+    <div id="breadcrumb" class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="breadcrumb-tree">
+                        <li><a href="/">Trang chủ</a></li>
+                        <li><a href="#">Danh mục</a></li>
+                        <li class="active">{{ product.name }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHẦN THÂN CHI TIẾT SẢN PHẨM -->
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <!-- CỘT ẢNH TO -->
+                <div class="col-md-5 col-md-push-2">
+                    <div id="product-main-img">
+                        <!-- Hiển thị ảnh chính trước -->
+                        {% if product.image %}
+                        <div class="product-preview">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        </div>
+                        {% endif %}
+                        <!-- Vòng lặp hiển thị các ảnh phụ từ Database -->
+                        {% for img in product.images.all %}
+                        <div class="product-preview">
+                            <img src="{{ img.image.url }}" alt="{{ product.name }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- CỘT ẢNH NHỎ THUMBNAIL (BÊN TRÁI) -->
+                <div class="col-md-2  col-md-pull-5">
+                    <div id="product-imgs">
+                        <!-- Ảnh chính -->
+                        {% if product.image %}
+                        <div class="product-preview">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        </div>
+                        {% endif %}
+                        <!-- Vòng lặp các ảnh phụ -->
+                        {% for img in product.images.all %}
+                        <div class="product-preview">
+                            <img src="{{ img.image.url }}" alt="{{ product.name }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- CỘT THÔNG TIN SẢN PHẨM BÊN PHẢI -->
+                <div class="col-md-5">
+                    <div class="product-details">
+                        <h2 class="product-name">{{ product.name }}</h2>
+                        <div>
+                            <div class="product-rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star-o"></i>
+                            </div>
+                            <!-- Đếm số lượng review thực tế -->
+                            <a class="review-link" href="#product-tab">{{ product.reviews.count }} Đánh giá</a>
+                        </div>
+                        <div>
+                            <!-- Hiển thị giá hiện tại và Giá cũ (nếu có) -->
+                            <h3 class="product-price">{{ product.price|intcomma }} VNĐ 
+                                {% if product.old_price > 0 %}
+                                <del class="product-old-price" style="color: #999; font-size: 16px; margin-left: 10px;">{{ product.old_price|intcomma }} VNĐ</del>
+                                {% endif %}
+                            </h3>
+                            <span class="product-available">Còn hàng</span>
+                        </div>
+                        
+                        <!-- Hiển thị MÔ TẢ NGẮN (từ Admin) -->
+                        <p>{% if product.short_description %}{{ product.short_description|linebreaksbr }}{% else %}Đang cập nhật mô tả...{% endif %}</p>
+
+                        <div class="product-options">
+                            <label>
+                                Danh mục: {{ product.category }}
+                            </label>
+                        </div>
+
+                        <div class="add-to-cart">
+                            <div class="qty-label">
+                                Số lượng
+                                <div class="input-number">
+                                    <input type="number" value="1">
+                                    <span class="qty-up">+</span>
+                                    <span class="qty-down">-</span>
+                                </div>
+                            </div>
+                            <!-- Form thêm vào giỏ hàng thật (Sử dụng link /cart/add/... của bạn) -->
+                            <a href="{% url 'add_to_cart' product.id %}" class="add-to-cart-btn" style="display:inline-block; text-align:center;"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</a>
+                        </div>
+
+                        <ul class="product-btns">
+                            <li><a href="#"><i class="fa fa-heart-o"></i> Thêm vào yêu thích</a></li>
+                            <li><a href="#"><i class="fa fa-exchange"></i> So sánh</a></li>
+                        </ul>
+
+                        <ul class="product-links">
+                            <li>Chia sẻ:</li>
+                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                            <li><a href="#"><i class="fa fa-envelope"></i></a></li>
+                        </ul>
+
+                    </div>
+                </div>
+
+                <!-- KHU VỰC CÁC TAB CHI TIẾT DƯỚI CÙNG -->
+                <div class="col-md-12">
+                    <div id="product-tab">
+                        <ul class="tab-nav">
+                            <li class="active"><a data-toggle="tab" href="#tab1">Mô tả chi tiết</a></li>
+                            <li><a data-toggle="tab" href="#tab2">Thông số kỹ thuật</a></li>
+                            <li><a data-toggle="tab" href="#tab3">Đánh giá ({{ product.reviews.count }})</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- TAB 1: BÀI VIẾT MÔ TẢ -->
+                            <div id="tab1" class="tab-pane fade in active">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p>{% if product.description %}{{ product.description|linebreaksbr }}{% else %}Nội dung đang được cập nhật...{% endif %}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 2: THÔNG SỐ KỸ THUẬT -->
+                            <div id="tab2" class="tab-pane fade in">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p>{% if product.specifications %}{{ product.specifications|linebreaksbr }}{% else %}Thông số kỹ thuật đang được cập nhật...{% endif %}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 3: ĐÁNH GIÁ TỪ ADMIN -->
+                            <div id="tab3" class="tab-pane fade in">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div id="reviews">
+                                            <ul class="reviews">
+                                                {% for review in product.reviews.all %}
+                                                <li>
+                                                    <div class="review-heading">
+                                                        <h5 class="name"><i class="fa fa-user-circle"></i> {{ review.user_name }}</h5>
+                                                        <p class="date">{{ review.created_at|date:"d/m/Y H:i" }}</p>
+                                                        <div class="review-rating">
+                                                            <!-- Vòng lặp in số sao động theo điểm rating (1-5) -->
+                                                            {% for i in "12345" %}
+                                                                {% if forloop.counter <= review.rating %}
+                                                                    <i class="fa fa-star"></i>
+                                                                {% else %}
+                                                                    <i class="fa fa-star-o empty"></i>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                    <div class="review-body">
+                                                        <p>{{ review.comment|linebreaksbr }}</p>
+                                                    </div>
+                                                    <hr>
+                                                </li>
+                                                {% empty %}
+                                                <p style="text-align:center; padding: 30px; color:#999;">Chưa có đánh giá nào cho sản phẩm này.</p>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEWSLETTER -->
+    <div id="newsletter" class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="newsletter">
+                        <p>Đăng ký nhận <strong>BẢN TIN KHUYẾN MÃI</strong></p>
+                        <form>
+                            <input class="input" type="email" placeholder="Nhập Email của bạn">
+                            <button class="newsletter-btn"><i class="fa fa-envelope"></i> Đăng ký</button>
+                        </form>
+                        <ul class="newsletter-follow">
+                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                            <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer id="footer">
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 col-xs-6">
+                        <div class="footer">
+                            <h3 class="footer-title">Về chúng tôi</h3>
+                            <p>Chuyên cung cấp các thiết bị di động, laptop chính hãng với giá cạnh tranh nhất.</p>
+                            <ul class="footer-links">
+                                <li><a href="#"><i class="fa fa-map-marker"></i>Số 18, Phố Viên, Bắc Từ Liêm, HN</a>
+                                </li>
+                                <li><a href="#"><i class="fa fa-phone"></i>+84 123 456 789</a></li>
+                                <li><a href="#"><i class="fa fa-envelope-o"></i>contact@electro.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="bottom-footer" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <span class="copyright">Bản quyền © 2026 - Nguyễn Duy Vũ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="{% static 'home/js/jquery.min.js' %}"></script>
+    <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'home/js/slick.min.js' %}"></script>
+    <script src="{% static 'home/js/nouislider.min.js' %}"></script>
+    <script src="{% static 'home/js/jquery.zoom.min.js' %}"></script>
+    <script src="{% static 'home/js/main.js' %}"></script>
+
+</body>
+</html>

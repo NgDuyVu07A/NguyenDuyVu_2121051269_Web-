@@ -1,0 +1,632 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Electro - Cửa hàng thiết bị di động</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/bootstrap.min.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/slick.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/slick-theme.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/nouislider.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'home/css/font-awesome.min.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/style.css' %}" />
+
+    <style>
+        /* --- PHẦN GIỮ NGUYÊN CSS TÌM KIẾM CỦA VŨ --- */
+        .header-search form .input {
+            border-radius: 40px 0px 0px 40px !important;
+            width: calc(100% - 100px) !important;
+            padding: 0px 20px !important;
+        }
+
+        .header-search form .search-btn {
+            border-radius: 0px 40px 40px 0px !important;
+            width: 100px !important;
+        }
+
+        /* --- CSS ÉP KHUNG SẢN PHẨM ĐỀU NHAU TĂM TẮP --- */
+        .product {
+            border-radius: 15px !important;
+            border: 1px solid #eee !important;
+            transition: 0.3s;
+            padding-bottom: 15px;
+            text-align: center;
+            position: relative;
+            background: #fff;
+            margin: 10px 5px;
+            display: flex !important;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 460px;
+        }
+
+        .product:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-img-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 180px;
+            padding-top: 30px;
+        }
+
+        .product-img-container img {
+            max-height: 150px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .product-body {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+
+        .product-name {
+            height: 42px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        .product-name a {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tech-specs {
+            background-color: #f6f6f6;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 11px;
+            color: #666;
+            line-height: 1.5;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .product-footer-center {
+            margin-top: auto;
+            color: #448aff;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .product-footer-center:hover {
+            transform: scale(1.05);
+        }
+
+        .sale-badge {
+            background-color: #D10024;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 10px 0 10px 0;
+            font-weight: bold;
+            font-size: 11px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 5;
+        }
+
+        .installment-badge {
+            background-color: #e2ebff;
+            color: #448aff;
+            padding: 4px 10px;
+            border-radius: 0 10px 0 10px;
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 5;
+        }
+
+        .product-price {
+            color: #D10024 !important;
+            font-size: 18px !important;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .old-price {
+            color: #999;
+            text-decoration: line-through;
+            font-size: 14px;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+
+        .wishlist-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            border: 1px solid #2ecc71;
+            border-radius: 12px;
+            padding: 12px 25px;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            color: #2ecc71;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .wishlist-toast i {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .toast-close {
+            margin-left: 15px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        /* --- CSS TẠO TAB (Chia đều 2 bên 50%) --- */
+        .custom-tab-nav {
+            display: flex;
+            border-bottom: 2px solid #f5f5f5;
+            margin-bottom: 20px;
+            padding: 0;
+            width: 100%;
+        }
+
+        .custom-tab-nav li {
+            list-style: none;
+            width: 50%;
+            text-align: center;
+        }
+
+        .custom-tab-nav li a {
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            padding: 10px 0;
+            text-transform: uppercase;
+            border-bottom: 2px solid transparent;
+            text-decoration: none;
+        }
+
+        .custom-tab-nav li.active a {
+            color: #D10024;
+            border-bottom: 2px solid #D10024;
+        }
+
+        /* --- CSS CHO CÁC NÚT LỌC --- */
+        .filter-tags-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tags-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .filter-tags-scroll::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 4px;
+        }
+
+        .filter-tag {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #333;
+            white-space: nowrap;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .filter-tag:hover {
+            border-color: #D10024;
+            color: #D10024;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wishlist-toast" class="wishlist-toast">
+        <i class="fa fa-check-circle"></i>
+        <span id="toast-message">Đã thêm vào danh sách yêu thích</span>
+        <span class="toast-close" onclick="this.parentElement.style.display='none'">&times;</span>
+    </div>
+
+    <!-- HEADER (GIỮ NGUYÊN) -->
+    <header>
+        <div id="top-header">
+            <div class="container">
+                <ul class="header-links pull-right">
+                    {% if user.is_authenticated %}
+                    <li><a href="#"><i class="fa fa-user"></i> Xin chào, {{ user.username }}</a></li>
+                    <li style="display:inline-block;">
+                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit"
+                                style="background:none; border:none; color:#fff; font-size:12px; cursor: pointer;">
+                                <i class="fa fa-sign-out"></i> Đăng xuất
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}"><i class="fa fa-user"></i> Đăng nhập</a></li>
+                    <li><a href="{% url 'register' %}"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div id="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="header-logo">
+                            <a href="/" class="logo">
+                                <img src="{% static 'home/img/logo.png' %}" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="header-search">
+                            <form action="." method="GET">
+                                <input class="input" name="q" placeholder="Săn Deal hời ngay...">
+                                <button class="search-btn" type="submit">Tìm kiếm</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-3 clearfix">
+                        <div class="header-ctn">
+                            <div>
+                                <a href="{% url 'cart' %}">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Giỏ hàng</span>
+                                </a>
+                            </div>
+                            <div class="menu-toggle">
+                                <a href="#"><i class="fa fa-bars"></i><span>Menu</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav id="navigation">
+        <div class="container">
+            <div id="responsive-nav">
+                <ul class="main-nav nav navbar-nav">
+                    <li class="active"><a href="/">Trang chủ</a></li>
+                    <li><a href="#">Khuyến mãi Hot</a></li>
+                    <li><a href="#">Danh mục</a></li>
+                    <li><a href="#">Laptop</a></li>
+                    <li><a href="#">Điện thoại</a></li>
+                    <li><a href="#">Máy ảnh</a></li>
+                    <li><a href="#">Phụ kiện</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner Section -->
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img"><img src="{% static 'home/img/shop01.png' %}" alt=""></div>
+                        <div class="shop-body">
+                            <h3>Bộ sưu tập<br>Laptop</h3>
+                            <a href="#" class="cta-btn">Mua ngay <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img"><img src="{% static 'home/img/shop03.png' %}" alt=""></div>
+                        <div class="shop-body">
+                            <h3>Phụ kiện<br>chính hãng</h3>
+                            <a href="#" class="cta-btn">Mua ngay <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img"><img src="{% static 'home/img/shop02.png' %}" alt=""></div>
+                        <div class="shop-body">
+                            <h3>Máy ảnh<br>kỹ thuật số</h3>
+                            <a href="#" class="cta-btn">Mua ngay <i class="fa fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Section -->
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- KHUNG TAB NAV -->
+                    <ul class="custom-tab-nav" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#tab-phone" aria-controls="tab-phone" role="tab" data-toggle="tab">ĐIỆN THOẠI</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#tab-tablet" aria-controls="tab-tablet" role="tab" data-toggle="tab">MÁY TÍNH
+                                BẢNG</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="products-tabs">
+
+                            <!-- TAB 1: ĐIỆN THOẠI -->
+                            <div id="tab-phone" class="tab-pane active">
+
+                                <!-- BỘ LỌC DÀNH RIÊNG CHO ĐIỆN THOẠI -->
+                                <div class="filter-tags-scroll">
+                                    <div class="filter-tag">🎮 Điện thoại chơi game</div>
+                                    <div class="filter-tag">🔋 Điện thoại pin trâu</div>
+                                    <div class="filter-tag">🚀 Điện thoại 5G</div>
+                                    <div class="filter-tag">📸 Điện thoại chụp ảnh đẹp</div>
+                                    <div class="filter-tag">📱 Điện thoại gập</div>
+                                    <div class="filter-tag">🤖 Điện thoại AI</div>
+                                    <div class="filter-tag">📞 Điện thoại phổ thông</div>
+                                </div>
+
+                                <div class="products-slick" data-nav="#slick-nav-phone">
+                                    {% for p in phones %}
+                                    <div class="product">
+                                        <!-- HIỂN THỊ % GIẢM GIÁ THẬT -->
+                                        <span class="sale-badge">Giảm {{ p.discount }}%</span>
+                                        <span class="installment-badge">Trả góp 0%</span>
+
+                                        <div class="product-img-container">
+                                            <a href="{% url 'detail' p.id %}">
+                                                {% if p.image %}
+                                                <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                                                {% else %}
+                                                <img src="{% static 'home/img/no-image.png' %}" alt="No Image">
+                                                {% endif %}
+                                            </a>
+                                        </div>
+
+                                        <div class="product-body">
+                                            <h3 class="product-name">
+                                                <a href="{% url 'detail' p.id %}">{{ p.name|upper }} </a>
+                                            </h3>
+
+                                            <!-- GIÁ THẬT -->
+                                            <div class="product-price">
+                                                <span class="new-price">{{ p.price|intcomma }}đ</span>
+                                                {% if p.old_price > 0 %}
+                                                <span class="old-price">{{ p.old_price|intcomma }}đ</span>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- THÔNG SỐ KỸ THUẬT -->
+                                            <div class="tech-specs">
+                                                {% if p.specifications %}
+                                                {{ p.specifications|linebreaksbr }}
+                                                {% else %}
+                                                Thông tin đang cập nhật...
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="product-footer-center"
+                                                onclick="handleWishlist(this, '{{ p.name }}')">
+                                                <i class="fa fa-heart-o"></i> Yêu thích
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div id="slick-nav-phone" class="products-slick-nav"></div>
+                            </div>
+
+                            <!-- TAB 2: MÁY TÍNH BẢNG -->
+                            <div id="tab-tablet" class="tab-pane">
+                                <!-- BỘ LỌC DÀNH RIÊNG CHO MÁY TÍNH BẢNG -->
+                                <div class="filter-tags-scroll">
+                                    <div class="filter-tag">📱 Cho trẻ em</div>
+                                    <div class="filter-tag">🎮 Chơi game</div>
+                                    <div class="filter-tag">🎨 Đồ họa - Sáng tạo</div>
+                                    <div class="filter-tag">💻 Học tập - Văn phòng</div>
+                                    <div class="filter-tag">🤖 Máy tính bảng AI</div>
+                                    <div class="filter-tag">📖 Máy đọc sách</div>
+                                </div>
+
+                                <div class="products-slick" data-nav="#slick-nav-tablet">
+                                    {% for p in tablets %}
+                                    <div class="product">
+                                        <!-- HIỂN THỊ % GIẢM GIÁ THẬT -->
+                                        <span class="sale-badge">Giảm {{ p.discount }}%</span>
+                                        <span class="installment-badge">Trả góp 0%</span>
+
+                                        <div class="product-img-container">
+                                            <a href="{% url 'detail' p.id %}">
+                                                {% if p.image %}
+                                                <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                                                {% else %}
+                                                <img src="{% static 'home/img/no-image.png' %}" alt="No Image">
+                                                {% endif %}
+                                            </a>
+                                        </div>
+
+                                        <div class="product-body">
+                                            <h3 class="product-name">
+                                                <a href="{% url 'detail' p.id %}">{{ p.name|upper }} </a>
+                                            </h3>
+
+                                            <!-- GIÁ THẬT -->
+                                            <div class="product-price">
+                                                <span class="new-price">{{ p.price|intcomma }}đ</span>
+                                                {% if p.old_price > 0 %}
+                                                <span class="old-price">{{ p.old_price|intcomma }}đ</span>
+                                                {% endif %}
+                                            </div>
+
+                                            <!-- THÔNG SỐ KỸ THUẬT -->
+                                            <div class="tech-specs">
+                                                {% if p.specifications %}
+                                                {{ p.specifications|linebreaksbr }}
+                                                {% else %}
+                                                Thông tin đang cập nhật...
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="product-footer-center"
+                                                onclick="handleWishlist(this, '{{ p.name }}')">
+                                                <i class="fa fa-heart-o"></i> Yêu thích
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div id="slick-nav-tablet" class="products-slick-nav"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- NEWSLETTER -->
+    <div id="newsletter" class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="newsletter">
+                        <p>Sign Up for the <strong>NEWSLETTER</strong></p>
+                        <form>
+                            <input class="input" type="email" placeholder="Enter Your Email">
+                            <button class="newsletter-btn"><i class="fa fa-envelope"></i> Subscribe</button>
+                        </form>
+                        <ul class="newsletter-follow">
+                            <li>
+                                <a href="#"><i class="fa fa-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-twitter"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-instagram"></i></a>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-pinterest"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- FOOTER (GIỮ NGUYÊN) -->
+    <footer id="footer">
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 col-xs-6">
+                        <div class="footer">
+                            <h3 class="footer-title">Về chúng tôi</h3>
+                            <p>Chuyên cung cấp các thiết bị di động, laptop chính hãng với giá cạnh tranh nhất.</p>
+                            <ul class="footer-links">
+                                <li><a href="#"><i class="fa fa-map-marker"></i>Số 18, Phố Viên, Bắc Từ Liêm, HN</a>
+                                </li>
+                                <li><a href="#"><i class="fa fa-phone"></i>+84 123 456 789</a></li>
+                                <li><a href="#"><i class="fa fa-envelope-o"></i>contact@electro.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="bottom-footer" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <span class="copyright">Bản quyền © 2026 - Nguyễn Duy Vũ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'home/js/jquery.min.js' %}"></script>
+    <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'home/js/slick.min.js' %}"></script>
+    <script src="{% static 'home/js/nouislider.min.js' %}"></script>
+    <script src="{% static 'home/js/jquery.zoom.min.js' %}"></script>
+    <script src="{% static 'home/js/main.js' %}"></script>
+
+    <script>
+        function handleWishlist(element, name) {
+            const icon = element.querySelector('i');
+            const toast = document.getElementById('wishlist-toast');
+            const message = document.getElementById('toast-message');
+
+            if (icon.classList.contains('fa-heart-o')) {
+                icon.classList.replace('fa-heart-o', 'fa-heart');
+                icon.style.color = "#e74c3c";
+                message.innerText = "Đã thêm " + name + " vào yêu thích";
+            } else {
+                icon.classList.replace('fa-heart', 'fa-heart-o');
+                icon.style.color = "#448aff";
+                message.innerText = "Đã xóa " + name + " khỏi yêu thích";
+            }
+
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // --- CẬP NHẬT SLICK KHI CHUYỂN TAB ĐỂ KHÔNG BỊ LỖI ---
+        $(document).ready(function () {
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                $('.products-slick').slick('setPosition');
+            });
+        });
+    </script>
+</body>
+
+</html>
