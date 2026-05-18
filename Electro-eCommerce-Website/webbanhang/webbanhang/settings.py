@@ -30,6 +30,8 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+# webbanhang/settings.py
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,8 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize', # <--- Thêm chính xác dòng này vào đây
+    
+    # THÊM DÒNG NÀY VÀO ĐÂY
+    'django.contrib.humanize', 
+
     'home',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -106,8 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'vi'
 
-TIME_ZONE = 'UTC'
-
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
 USE_I18N = True
 
 USE_TZ = True
@@ -135,3 +140,6 @@ USE_L100N = False  # Phải tắt cái này thì các cài đặt bên dưới m
 USE_THOUSAND_SEPARATOR = True
 THOUSAND_SEPARATOR = '.'
 NUMBER_GROUPING = 3
+
+# Cho phép gửi email ra màn hình console để test
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

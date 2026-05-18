@@ -1,11 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User
+from ckeditor.fields import RichTextField  
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # 1. Bảng Danh mục 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+    
     def __str__(self):
         return self.name
+        
+    # --- Đổi tên hiển thị trong trang Admin ---
+    class Meta:
+        verbose_name = 'Danh mục'
+        verbose_name_plural = 'Danh mục'
     
 # 2. Bảng Sản phẩm (Đảm bảo định nghĩa TRƯỚC OrderItem)
 class Product(models.Model):
@@ -16,16 +25,31 @@ class Product(models.Model):
     # --- CÁC TRƯỜNG MỚI VŨ YÊU CẦU ---
     old_price = models.IntegerField(default=0, verbose_name="Giá gốc (chưa giảm)")
     discount = models.IntegerField(default=0, verbose_name="Giảm giá (%)")
-    specifications = models.TextField(blank=True, null=True, verbose_name="Thông số kỹ thuật")
+    
+    # TRƯỜNG NÀY GIỮ NGUYÊN: Dùng để in ra dạng text ngắn gọn ở trang chủ (index.html)
+    specifications = models.TextField(blank=True, null=True, verbose_name="Thông số kỹ thuật (Trang chủ)")
+    
+    # <--- THÊM TRƯỜNG MỚI NÀY: Dùng để vẽ bảng trong Tab Thông số kỹ thuật của trang detail.html
+    detailed_specifications = RichTextField(blank=True, null=True, verbose_name="Bảng Thông số kỹ thuật (Tab Thông số)")
+    
     short_description = models.TextField(blank=True, null=True, verbose_name="Mô tả ngắn (Cạnh giá tiền)")
-    description = models.TextField(blank=True, null=True, verbose_name="Bài viết giới thiệu (Tab Description)")
+    
+    # <--- ĐÃ SỬA: Nâng cấp lên RichTextField để viết bài chuẩn SEO, có chèn hình, bôi đậm...
+    description = RichTextField(blank=True, null=True, verbose_name="Bài viết giới thiệu (Tab Mô tả chi tiết)")
     # --------------------------------
     
     image = models.ImageField(upload_to='products/')
     date_added = models.DateTimeField(auto_now_add=True) 
 
+    is_available = models.BooleanField(default=True, verbose_name="Còn hàng")
+
     def __str__(self):
         return self.name  
+
+    # --- Đổi tên hiển thị trong trang Admin ---
+    class Meta:
+        verbose_name = 'Sản phẩm'
+        verbose_name_plural = 'Sản phẩm'
 
 # 3. Đơn hàng (Cái giỏ) - PHẢI VIẾT SÁT LỀ TRÁI
 class Order(models.Model):
@@ -48,6 +72,11 @@ class Order(models.Model):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
         return total
+        
+    # --- Đổi tên hiển thị trong trang Admin ---
+    class Meta:
+        verbose_name = 'Đơn hàng'
+        verbose_name_plural = 'Đơn hàng'
 
 # 4. Chi tiết đơn hàng
 class OrderItem(models.Model):
@@ -60,6 +89,11 @@ class OrderItem(models.Model):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+        
+    # --- Đổi tên hiển thị trong trang Admin ---
+    class Meta:
+        verbose_name = 'Chi tiết đơn hàng'
+        verbose_name_plural = 'Chi tiết đơn hàng'
 
 # 5. Bảng chứa nhiều ảnh phụ cho 1 sản phẩm
 class ProductImage(models.Model):
@@ -68,6 +102,11 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"Ảnh phụ của {self.product.name}"
+        
+    # --- Đổi tên hiển thị trong trang Admin ---
+    class Meta:
+        verbose_name = 'Ảnh phụ sản phẩm'
+        verbose_name_plural = 'Ảnh phụ sản phẩm'
 
 # 6. Bảng chứa Review của khách hàng
 class Review(models.Model):
@@ -79,3 +118,89 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review của {self.user_name} cho {self.product.name}"
+        
+    # --- Đổi tên hiển thị trong trang Admin ---
+    class Meta:
+        verbose_name = 'Đánh giá khách hàng'
+        verbose_name_plural = 'Đánh giá khách hàng'
+    
+class News(models.Model):
+    title = models.CharField(max_length=255, verbose_name="Tiêu đề tin tức")
+    image = models.ImageField(upload_to='news/', verbose_name="Ảnh tin tức")
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Tin tức'
+        verbose_name_plural = "Tin tức sản phẩm"
+
+# Căn sát lề trái hoàn toàn nhé
+class Wishlist(models.Model):
+    # Thụt vào 1 Tab (4 dấu cách)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE) 
+    added_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name}"
+        
+    # --- Đổi tên hiển thị trong trang Admin ---
+    class Meta:
+        verbose_name = 'Danh sách yêu thích'
+        verbose_name_plural = 'Danh sách yêu thích'
+    
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15, null=True, blank=True)
+    gender = models.CharField(max_length=10, null=True, blank=True)
+    dob = models.DateField(null=True, blank=True) # Ngày sinh
+    address = models.CharField(max_length=255, null=True, blank=True)
+    password_updated_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
+        
+    # --- Đổi tên hiển thị trong trang Admin ---
+    class Meta:
+        verbose_name = 'Hồ sơ người dùng'
+        verbose_name_plural = 'Hồ sơ người dùng'
+
+# Hai hàm này giúp tự động tạo UserProfile trống mỗi khi có một User mới đăng ký
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    # Kiểm tra nếu user đã có profile thì mới lưu, tránh bị lỗi crash
+    if hasattr(instance, 'userprofile'):
+        instance.userprofile.save()
+
+        # 7. Bảng Màu sắc sản phẩm (Product Colors)
+class ProductColor(models.Model):
+    product = models.ForeignKey(Product, related_name='colors', on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, verbose_name="Tên màu (VD: Cam, Xám, Tím)")
+    image = models.ImageField(upload_to='products/colors/', null=True, blank=True, verbose_name="Ảnh thu nhỏ màu này")
+    price = models.IntegerField(default=0, verbose_name="Giá bán của màu này")
+
+    class Meta:
+        verbose_name = 'Màu sắc sản phẩm'
+        verbose_name_plural = 'Màu sắc sản phẩm'
+
+    def __str__(self):
+        return f"{self.name} - {self.product.name}"
+    
+# --- TỰ ĐỘNG TÍNH SỐ SAO TRUNG BÌNH THỰC TẾ ---
+    @property
+    def get_avg_rating(self):
+        from django.db.models import Avg
+        avg = self.reviews.aggregate(Avg('rating'))['rating__avg']
+        return round(avg, 1) if avg else 0
+
+    # --- LÀM TRÒN SỐ SAO ĐỂ THẮP SÁNG ICON ĐÈN ---
+    @property
+    def get_rating_stars(self):
+        return round(self.get_avg_rating)

@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Đăng nhập</title>
@@ -9,22 +10,42 @@
     <link type="text/css" rel="stylesheet" href="{% static 'home/css/style.css' %}" />
     <style>
         .login-box {
-            width: 100%; max-width: 400px; margin: 50px auto;
-            padding: 30px; border: 1px solid #e4e7ed; background-color: #fff;
+            width: 100%;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid #e4e7ed;
+            background-color: #fff;
         }
-        .form-control { margin-bottom: 15px; height: 40px; }
+
+        .form-control {
+            margin-bottom: 15px;
+            height: 40px;
+        }
+
         .login-btn {
-            background-color: #D10024; color: #fff; border: none; 
-            width: 100%; height: 40px; font-weight: 700; text-transform: uppercase;
+            background-color: #D10024;
+            color: #fff;
+            border: none;
+            width: 100%;
+            height: 40px;
+            font-weight: 700;
+            text-transform: uppercase;
         }
-        .login-btn:hover { background-color: #a8001d; }
+
+        .login-btn:hover {
+            background-color: #a8001d;
+        }
     </style>
 </head>
+
 <body>
     <header>
         <div id="header">
             <div class="container">
-                <div class="col-md-3"><div class="header-logo"><a href="/" class="logo"><img src="{% static 'home/img/logo.png' %}" alt=""></a></div></div>
+                <div class="col-md-3">
+                    <div class="header-logo"><a href="/" class="logo"><img src="{% static 'home/img/logo.png' %}" alt=""></a></div>
+                </div>
             </div>
         </div>
     </header>
@@ -33,7 +54,7 @@
         <div class="container">
             <div class="login-box">
                 <h3 class="text-center" style="margin-bottom: 20px;">ĐĂNG NHẬP</h3>
-                
+
                 <form method="POST">
                     {% csrf_token %}
                     <div class="form-group">
@@ -44,10 +65,29 @@
                         <label>Mật khẩu</label>
                         <input type="password" name="password" class="form-control" required>
                     </div>
-                    
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center;">
+                            <input type="checkbox" id="remember_me" name="remember_me" style="cursor: pointer; width: 15px; height: 15px; margin: 0;">
+                            <label for="remember_me" style="font-weight: 500; margin-left: 8px; margin-bottom: 0; cursor: pointer; color: #333; font-size: 13px;">
+                                Ghi nhớ đăng nhập
+                            </label>
+                        </div>
+
+                        <div>
+                            <a href="{% url 'password_reset' %}" style="color: #D10024; font-size: 13px; font-weight: 600; text-decoration: none;">
+                                Quên mật khẩu?
+                            </a>
+                        </div>
+                    </div>
+
+                    {% if error %}
+                    <p style="color: red; font-size: 13px; text-align: center; margin-bottom: 15px;">{{ error }}</p>
+                    {% endif %}
+
                     <button type="submit" class="login-btn">Đăng nhập</button>
                 </form>
-                
+
                 <p class="text-center" style="margin-top: 15px;">
                     Chưa có tài khoản? <a href="{% url 'register' %}" style="color: #D10024;">Đăng ký ngay</a>
                 </p>
@@ -55,4 +95,5 @@
         </div>
     </div>
 </body>
+
 </html>

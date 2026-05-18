@@ -1,0 +1,1374 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Máy tính bảng chính hãng - Electro</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/bootstrap.min.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/slick.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/slick-theme.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/nouislider.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'home/css/font-awesome.min.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/style.css' %}" />
+
+    <style>
+        /* --- CSS ÉP KHUNG SẢN PHẨM & CƠ BẢN --- */
+        .product {
+            border-radius: 15px !important;
+            border: 1px solid #eee !important;
+            transition: 0.3s;
+            padding-bottom: 15px;
+            text-align: center;
+            position: relative;
+            background: #fff;
+            margin: 10px 5px;
+            display: flex !important;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 460px;
+        }
+
+        .product:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-img-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 180px;
+            padding-top: 30px;
+        }
+
+        .product-img-container img {
+            max-height: 150px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .product-body {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+
+        .product-name {
+            height: 42px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        .product-name a {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tech-specs {
+            background-color: #f6f6f6;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 11px;
+            color: #666;
+            line-height: 1.5;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .product-footer-center {
+            margin-top: auto;
+            color: #448aff;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .product-footer-center:hover {
+            transform: scale(1.05);
+        }
+
+        .sale-badge {
+            background-color: #D10024;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 10px 0 10px 0;
+            font-weight: bold;
+            font-size: 11px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 5;
+        }
+
+        .installment-badge {
+            background-color: #e2ebff;
+            color: #448aff;
+            padding: 4px 10px;
+            border-radius: 0 10px 0 10px;
+            font-size: 11px;
+            font-weight: bold;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 5;
+        }
+
+        .product-price {
+            color: #D10024 !important;
+            font-size: 18px !important;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .old-price {
+            color: #999;
+            text-decoration: line-through;
+            font-size: 14px;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+
+        /* --- CSS THÔNG BÁO TOAST --- */
+        .wishlist-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            border: 1px solid #2ecc71;
+            border-radius: 12px;
+            padding: 12px 25px;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            color: #2ecc71;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .wishlist-toast i {
+            font-size: 20px;
+            margin-right: 12px;
+        }
+
+        .toast-close {
+            margin-left: 15px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        /* --- HEADER ĐEN CHUẨN --- */
+        #top-header {
+            display: none;
+        }
+
+        #header {
+            background-color: #1E1F29 !important;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: none;
+        }
+
+        .header-logo img {
+            filter: brightness(0) invert(1);
+            max-height: 40px;
+        }
+
+        .header-main-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            width: 100%;
+            position: relative;
+        }
+
+        .btn-header-category {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #fff !important;
+            border-radius: 10px;
+            height: 42px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none !important;
+            transition: 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-header-category:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        .btn-header-category i {
+            font-size: 18px;
+            color: #D10024 !important;
+        }
+
+        .header-search {
+            flex-grow: 1;
+            margin: 0;
+        }
+
+        .header-search form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 42px;
+            background: #fff;
+            border-radius: 40px;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .header-search form .input {
+            border: none !important;
+            outline: none !important;
+            flex-grow: 1;
+            height: 100% !important;
+            padding: 0 20px !important;
+            font-size: 14px;
+            background: transparent;
+            box-shadow: none !important;
+            color: #333;
+        }
+
+        .header-search form .search-btn {
+            background: #D10024;
+            color: #fff;
+            border: none;
+            height: 100%;
+            padding: 0 25px;
+            font-weight: bold;
+            border-radius: 0 40px 40px 0;
+            transition: 0.3s;
+        }
+
+        .cart-qty-badge {
+            background: #fff;
+            color: #D10024;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 7px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+
+        /* Bảng Danh mục Menu Dọc */
+        .custom-dropdown {
+            position: static;
+        }
+
+        .dropdown-menu-list {
+            position: absolute;
+            top: calc(100% + 15px);
+            left: 0;
+            width: 250px;
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 10px 0;
+            margin: 0;
+            list-style: none;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(15px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            border: 1px solid #eee;
+            text-align: left;
+        }
+
+        .custom-dropdown::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 250px;
+            height: 20px;
+            background: transparent;
+        }
+
+        .custom-dropdown:hover .dropdown-menu-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu-list>li>a {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px !important;
+            color: #333 !important;
+            font-weight: 500 !important;
+            font-size: 13.5px;
+            text-decoration: none;
+            transition: 0.2s;
+            background: transparent !important;
+            border-bottom: none !important;
+            text-transform: none !important;
+        }
+
+        .menu-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-item-left i {
+            width: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .dropdown-menu-list>li>a.hot-promo {
+            color: #D10024 !important;
+            font-weight: 700 !important;
+            background-color: #fffafb !important;
+        }
+
+        .dropdown-menu-list>li>a.hot-promo .menu-item-left i {
+            color: #D10024;
+        }
+
+        /* Bảng MEGA MENU */
+        .dropdown-menu-list li.has-submenu {
+            position: static;
+        }
+
+        .submenu-panel {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background-color: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(15px);
+            transition: all 0.3s ease;
+            z-index: 10000;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            gap: 20px;
+            min-height: 100%;
+        }
+
+        .dropdown-menu-list li.has-submenu:hover .submenu-panel {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .submenu-column {
+            flex: 1;
+        }
+
+        .submenu-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 14px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 5px;
+            min-height: 33px;
+        }
+
+        .submenu-item {
+            display: flex !important;
+            align-items: center;
+            min-height: 42px;
+            padding: 8px 12px !important;
+            background: #f9f9f9 !important;
+            border: 1px solid #eee !important;
+            border-radius: 8px !important;
+            color: #444 !important;
+            font-size: 12.5px !important;
+            margin-bottom: 8px !important;
+            text-decoration: none !important;
+            transition: 0.2s !important;
+            font-weight: 500 !important;
+            line-height: 1.4;
+        }
+
+        .submenu-item:hover {
+            background: #fffafb !important;
+            border-color: #D10024 !important;
+            color: #D10024 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(209, 0, 36, 0.1);
+        }
+
+        .mega-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .mega-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .mega-grid-item {
+            border: 1px solid #e5e7eb !important;
+            border-radius: 8px !important;
+            padding: 8px 6px !important;
+            font-size: 12px !important;
+            color: #333 !important;
+            background: #fff !important;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none !important;
+            transition: 0.2s !important;
+            font-weight: 600 !important;
+            line-height: 1.3;
+            min-height: 36px;
+        }
+
+        .mega-grid-item:hover {
+            border-color: #D10024 !important;
+            color: #D10024 !important;
+            background: #fffafb !important;
+            box-shadow: 0 2px 8px rgba(209, 0, 36, 0.1);
+        }
+
+        .mega-brand-img {
+            max-height: 18px;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .badge-hot-tag {
+            background: #D10024;
+            color: white;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .menu-row-wrapper {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px !important;
+            color: #333;
+            font-weight: 500 !important;
+            font-size: 13.5px;
+            transition: 0.2s;
+            background: transparent;
+        }
+
+        .menu-row-wrapper:hover {
+            background-color: #f9f9f9 !important;
+        }
+
+        .menu-row-wrapper:hover .menu-item-left i {
+            color: #D10024;
+            transform: scale(1.1);
+        }
+
+        .links-container {
+            display: flex;
+            gap: 4px;
+            color: #333;
+        }
+
+        .links-container a {
+            color: #333;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .links-container a:hover {
+            color: #D10024;
+        }
+
+        /* ==========================================================
+           CSS TRANG TABLET (BREADCRUMB, BỘ LỌC HÃNG, NHU CẦU)
+        ============================================================= */
+        .breadcrumb-container {
+            background-color: #f8f9fa;
+            padding: 12px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breadcrumb-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .breadcrumb-list a {
+            color: #555;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .breadcrumb-list a:hover {
+            color: #D10024;
+        }
+
+        .breadcrumb-list span {
+            color: #D10024;
+        }
+
+        .breadcrumb-list i {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .page-block-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-block-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .brand-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .brand-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 30px;
+            padding: 6px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 38px;
+            min-width: 90px;
+        }
+
+        .brand-item img {
+            max-height: 18px;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .brand-item:hover,
+        .brand-item.active-brand {
+            border-color: #D10024;
+            color: #D10024;
+            background: #fffafb;
+            box-shadow: 0 2px 6px rgba(209, 0, 36, 0.1);
+        }
+
+        /* ==========================================================
+           CSS MỚI: BỘ LỌC TIÊU CHÍ VÀ DROPDOWN SIÊU CẤP
+        ============================================================= */
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .filter-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .criteria-btn {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+            text-decoration: none;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .criteria-btn i.fa-angle-down {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .criteria-btn i.fa-filter {
+            color: #D10024;
+        }
+
+        .criteria-btn:hover {
+            border-color: #D10024;
+            background: #fffafb;
+            color: #D10024;
+        }
+
+        .criteria-btn.active-filter {
+            border-color: #D10024;
+            color: #D10024;
+            background: #fffafb;
+        }
+
+        .criteria-btn.active-filter i.fa-angle-down {
+            transform: rotate(180deg);
+        }
+
+        .filter-dropdown-content {
+            display: none;
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 0;
+            background: #fff;
+            min-width: 380px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            border: 1px solid #eee;
+            z-index: 100;
+            padding: 15px;
+        }
+
+        .filter-dropdown-content.show {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .dropdown-item-btn {
+            border: 1px solid #e5e7eb;
+            background: #f9f9f9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            color: #333;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .dropdown-item-btn:hover {
+            border-color: #D10024;
+            color: #D10024;
+        }
+
+        .dropdown-item-btn.selected {
+            border-color: #D10024;
+            color: #D10024;
+            background: #fffafb;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .dropdown-action-btns {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .btn-cancel-filter {
+            flex: 1;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            color: #333;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-apply-filter {
+            flex: 1;
+            background: #e06c7e;
+            border: 1px solid #e06c7e;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .btn-apply-filter:hover {
+            background: #D10024;
+        }
+
+        .active-filters-container {
+            display: none;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            border-top: 1px dashed #eee;
+            padding-top: 15px;
+        }
+
+        .active-filters-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .active-tag {
+            background: #fff;
+            border: 1px solid #D10024;
+            color: #D10024;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .active-tag i {
+            cursor: pointer;
+        }
+
+        .clear-all-btn {
+            color: #448aff;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-left: 10px;
+            border: none;
+            background: transparent;
+            padding: 0;
+        }
+
+        /* --- SẮP XẾP --- */
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .sort-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .sort-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .sort-btn {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 6px 15px;
+            font-size: 13px;
+            color: #444;
+            text-decoration: none;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .sort-btn i {
+            color: #666;
+        }
+
+        .sort-btn:hover {
+            border-color: #D10024;
+            color: #D10024;
+            background: #fffafb;
+        }
+
+        .sort-btn.active-sort {
+            border-color: #448aff;
+            color: #448aff;
+            background: #f0f4ff;
+            font-weight: 600;
+        }
+
+        .sort-btn.active-sort i {
+            color: #448aff;
+        }
+    </style>
+</head>
+
+<body style="background-color: #f4f6f8;">
+    <div id="wishlist-toast" class="wishlist-toast">
+        <i class="fa fa-check-circle"></i>
+        <span id="toast-message">Đã thêm vào danh sách yêu thích</span>
+        <span class="toast-close" onclick="this.parentElement.style.display='none'">&times;</span>
+    </div>
+
+    <header>
+        <div id="header">
+            <div class="container">
+                <div class="header-main-row">
+                    <div class="header-logo"><a href="/" class="logo"><img src="{% static 'home/img/logo.png' %}" alt="Electro"></a></div>
+                    <div class="custom-dropdown">
+                        <a href="javascript:void(0);" class="btn-header-category"><i class="fa fa-bars" style="color: #fff !important; font-size: 16px;"></i> <span>Danh mục</span> <i class="fa fa-angle-down" style="color: #fff !important;"></i></a>
+                        <ul class="dropdown-menu-list">
+                            <li class="has-submenu">
+                                <a href="{% url 'hot_promotions' %}" class="hot-promo">
+                                    <div class="menu-item-left"><i class="fa fa-fire" style="font-size: 18px;"></i> Khuyến mãi Hot</div>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                                <div class="submenu-panel" style="width: 550px;">
+                                    <div class="submenu-column">
+                                        <div class="submenu-title">Chương trình ưu đãi</div>
+                                        <a href="{% url 'hot_promotions' %}" class="submenu-item">Hot sale cuối tuần <span class="badge-hot-tag">Hot</span></a>
+                                        <a href="#" class="submenu-item">Ưu đãi thanh toán</a>
+                                        <a href="#" class="submenu-item">Trả góp 3 không <span class="badge-hot-tag">Hot</span></a>
+                                        <a href="#" class="submenu-item">Đặc quyền online ưu đãi 50%++</a>
+                                        <a href="#" class="submenu-item">Tặng voucher 10% khi mua ĐT - Laptop</a>
+                                    </div>
+                                    <div class="submenu-column">
+                                        <div style="height: 33px; margin-bottom: 12px; border-bottom: 2px solid transparent; padding-bottom: 5px;"></div>
+                                        <a href="#" class="submenu-item">Iphone 16 Series trợ giá đến 3 triệu</a>
+                                        <a href="#" class="submenu-item">S25 Series trợ giá đến 1 triệu</a>
+                                        <a href="#" class="submenu-item">Xiaomi 15 trợ giá đến 3 triệu</a>
+                                        <a href="#" class="submenu-item">Laptop trợ giá đến 4 triệu</a>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="has-submenu">
+                                <div class="menu-row-wrapper">
+                                    <div class="menu-item-left">
+                                        <i class="fa fa-mobile" style="font-size: 18px;"></i>
+                                        <div class="links-container">
+                                            <a href="{% url 'phone' %}">Điện thoại</a>,
+                                            <a href="{% url 'tablet' %}">Tablet</a>
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-angle-right" style="color: #ccc; font-size: 16px;"></i>
+                                </div>
+                                <div class="submenu-panel" style="width: 880px;">
+                                    <div class="submenu-column" style="flex: 1.2;">
+                                        <div class="submenu-title">Hãng điện thoại</div>
+                                        <div class="mega-grid-3">
+                                            <a href="#" class="mega-grid-item" title="Apple"><img src="{% static 'home/img/logo/Phone/iPhone.png' %}" alt="Apple" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="SAMSUNG"><img src="{% static 'home/img/logo/Phone/Samsung.png' %}" alt="SAMSUNG" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="Xiaomi"><img src="{% static 'home/img/logo/Phone/XIAOMI.png' %}" alt="Xiaomi" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="OPPO"><img src="{% static 'home/img/logo/Phone/Oppo.png' %}" alt="OPPO" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="TECNO"><img src="{% static 'home/img/logo/Phone/TECNO.png' %}" alt="TECNO" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="HONOR"><img src="{% static 'home/img/logo/Phone/Honor.png' %}" alt="HONOR" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="nubia"><img src="{% static 'home/img/logo/Phone/Nubia.png' %}" alt="nubia" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="SONY"><img src="{% static 'home/img/logo/Phone/SONY.png' %}" alt="SONY" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="NOKIA"><img src="{% static 'home/img/logo/Phone/Nokia.png' %}" alt="NOKIA" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="itel"><img src="{% static 'home/img/logo/Phone/Itel.png' %}" alt="itel" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="HUAWEI"><img src="{% static 'home/img/logo/Phone/HUAWEI.png' %}" alt="HUAWEI" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="MEIZU"><img src="{% static 'home/img/logo/Phone/MEIZU.png' %}" alt="MEIZU" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="Infinix"><img src="{% static 'home/img/logo/Phone/Infinix.png' %}" alt="Infinix" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" style="grid-column: span 2;">Điện thoại phổ thông</a>
+                                        </div>
+                                    </div>
+                                    <div class="submenu-column" style="flex: 1.2;">
+                                        <div class="submenu-title">Hãng máy tính bảng</div>
+                                        <div class="mega-grid-3">
+                                            <a href="#" class="mega-grid-item" title="iPad"><img src="{% static 'home/img/logo/Tablet/iPad.png' %}" alt="iPad" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="SAMSUNG"><img src="{% static 'home/img/logo/Tablet/Samsung.png' %}" alt="SAMSUNG" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="Xiaomi"><img src="{% static 'home/img/logo/Tablet/XIAOMI.png' %}" alt="Xiaomi" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="HUAWEI"><img src="{% static 'home/img/logo/Tablet/HUAWEI.png' %}" alt="HUAWEI" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="Lenovo"><img src="{% static 'home/img/logo/Tablet/Lenovo.png' %}" alt="Lenovo" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="TECLAST"><img src="{% static 'home/img/logo/Tablet/Teclast.png' %}" alt="TECLAST" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="nubia"><img src="{% static 'home/img/logo/Tablet/Nubia.png' %}" alt="nubia" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="HONOR"><img src="{% static 'home/img/logo/Tablet/Honor.png' %}" alt="HONOR" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item" title="OPPO"><img src="{% static 'home/img/logo/Tablet/Oppo.png' %}" alt="OPPO" class="mega-brand-img"></a>
+                                            <a href="#" class="mega-grid-item">Máy đọc sách</a>
+                                            <a href="#" class="mega-grid-item">Kindle</a>
+                                            <a href="#" class="mega-grid-item" title="BOOX"><img src="{% static 'home/img/logo/Tablet/boox.png' %}" alt="BOOX" class="mega-brand-img"></a>
+                                            <a href="{% url 'tablet' %}" class="mega-grid-item" style="grid-column: span 3; border-color: transparent !important; color: #448aff !important;">Xem thêm tất cả Tablet <i class="fa fa-angle-right" style="margin-left: 5px;"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="has-submenu">
+                                <a href="#">
+                                    <div class="menu-item-left"><i class="fa fa-laptop" style="font-size: 18px;"></i> Laptop</div>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="has-submenu">
+                                <a href="#">
+                                    <div class="menu-item-left"><i class="fa fa-headphones" style="font-size: 18px;"></i> Âm thanh, Tai nghe</div>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="has-submenu">
+                                <a href="#">
+                                    <div class="menu-item-left"><i class="fa fa-clock-o" style="font-size: 18px;"></i> Đồng hồ, Camera</div>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="has-submenu">
+                                <a href="#">
+                                    <div class="menu-item-left"><i class="fa fa-plug" style="font-size: 18px;"></i> Phụ kiện</div>
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="header-search">
+                        <form action="." method="GET">
+                            <input class="input" name="q" placeholder="Bạn muốn mua gì hôm nay?">
+                            <button class="search-btn" type="submit">Tìm kiếm</button>
+                        </form>
+                    </div>
+                    <a href="{% url 'cart' %}" class="btn-header-category" style="background: transparent !important; padding: 0 10px;">
+                        <i class="fa fa-shopping-cart" style="font-size: 22px; color: #fff !important;"></i>
+                        <span style="font-size: 14px;">Giỏ hàng</span>
+                        <span class="cart-qty-badge" id="cart-total" {% if cartItems == 0 %}style="display: none;" {% endif %}>{{ cartItems }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="btn-header-category"><i class="fa fa-user-circle-o" style="font-size: 20px; color: #fff !important;"></i><span style="max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ user.username }}</span></a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn-header-category"><i class="fa fa-user-circle-o" style="font-size: 20px; color: #fff !important;"></i> Đăng nhập</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="breadcrumb-container">
+        <div class="container">
+            <ul class="breadcrumb-list">
+                <li><a href="/"><i class="fa fa-home"></i> Trang chủ</a></li>
+                <li><i class="fa fa-angle-right"></i></li>
+                <li><span>Máy tính bảng</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section" style="padding-top: 0;">
+        <div class="container">
+
+            <div class="row" style="margin-bottom: 20px;">
+                <div class="col-md-6 col-xs-12" style="margin-bottom: 10px;">
+                    <a href="#"><img src="{% static 'home/img/ad_tablet_banner_1.png' %}" alt="Banner Tablet 1" style="width: 100%; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.05);"></a>
+                </div>
+                <div class="col-md-6 col-xs-12" style="margin-bottom: 10px;">
+                    <a href="#"><img src="{% static 'home/img/ad_tablet_banner_2.png' %}" alt="Banner Tablet 2" style="width: 100%; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.05);"></a>
+                </div>
+            </div>
+
+            <div class="page-block-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 class="page-block-title" style="margin: 0;">Máy tính bảng</h2>
+                </div>
+                <div class="brand-grid">
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="iPad" title="iPad"><img src="{% static 'home/img/logo/Tablet/iPad.png' %}" alt="iPad"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="Samsung" title="SAMSUNG"><img src="{% static 'home/img/logo/Tablet/Samsung.png' %}" alt="SAMSUNG"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="Xiaomi" title="Xiaomi"><img src="{% static 'home/img/logo/Tablet/XIAOMI.png' %}" alt="Xiaomi"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="HUAWEI" title="HUAWEI"><img src="{% static 'home/img/logo/Tablet/HUAWEI.png' %}" alt="HUAWEI"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="Lenovo" title="Lenovo"><img src="{% static 'home/img/logo/Tablet/Lenovo.png' %}" alt="Lenovo"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="TECLAST" title="TECLAST"><img src="{% static 'home/img/logo/Tablet/Teclast.png' %}" alt="TECLAST"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="Nubia" title="nubia"><img src="{% static 'home/img/logo/Tablet/Nubia.png' %}" alt="nubia"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="HONOR" title="HONOR"><img src="{% static 'home/img/logo/Tablet/Honor.png' %}" alt="HONOR"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="OPPO" title="OPPO"><img src="{% static 'home/img/logo/Tablet/Oppo.png' %}" alt="OPPO"></a>
+                    <a href="javascript:void(0);" class="brand-item filter-link" data-key="brand" data-value="boox" title="BOOX"><img src="{% static 'home/img/logo/Tablet/boox.png' %}" alt="BOOX"></a>
+                </div>
+            </div>
+
+            <div class="page-block-container" style="padding-bottom: 20px;">
+                <h2 class="page-block-title">Chọn theo tiêu chí</h2>
+
+                <div class="filter-row">
+                    <a href="javascript:void(0);" class="criteria-btn"><i class="fa fa-filter"></i> Bộ lọc</a>
+
+                    <a href="javascript:void(0);" class="criteria-btn filter-link" data-key="stock" data-value="true"><i class="fa fa-truck"></i> Sẵn hàng</a>
+                    <a href="javascript:void(0);" class="criteria-btn filter-link" data-key="new_arrival" data-value="true"><i class="fa fa-bolt" style="color: #f39c12;"></i> Hàng mới về</a>
+
+                    <div class="filter-dropdown-wrapper">
+                        <div class="criteria-btn drop-trigger">Xem theo giá <i class="fa fa-angle-down"></i></div>
+                        <div class="filter-dropdown-content">
+                            <div class="dropdown-grid">
+                                <div class="dropdown-item-btn temp-select" data-key="price" data-value="duoi-2t">Dưới 2 triệu</div>
+                                <div class="dropdown-item-btn temp-select" data-key="price" data-value="2t-5t">Từ 2 - 5 triệu</div>
+                                <div class="dropdown-item-btn temp-select" data-key="price" data-value="5t-8t">Từ 5 - 8 triệu</div>
+                                <div class="dropdown-item-btn temp-select" data-key="price" data-value="8t-15t">Từ 8 - 15 triệu</div>
+                                <div class="dropdown-item-btn temp-select" data-key="price" data-value="tren-15t">Trên 15 triệu</div>
+                            </div>
+                            <div class="dropdown-action-btns">
+                                <div class="btn-cancel-filter">Đóng</div>
+                                <div class="btn-apply-filter">Xem kết quả</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-dropdown-wrapper">
+                        <div class="criteria-btn drop-trigger">Nhu cầu sử dụng <i class="fa fa-angle-down"></i></div>
+                        <div class="filter-dropdown-content" style="min-width: 450px;">
+                            <div class="dropdown-grid">
+                                <div class="dropdown-item-btn temp-select" data-key="need" data-value="tre-em">📱 Cho trẻ em</div>
+                                <div class="dropdown-item-btn temp-select" data-key="need" data-value="game">🎮 Chơi game</div>
+                                <div class="dropdown-item-btn temp-select" data-key="need" data-value="ve-do-hoa">🎨 Đồ họa - Sáng tạo</div>
+                                <div class="dropdown-item-btn temp-select" data-key="need" data-value="hoc-tap">💻 Học tập - Văn phòng</div>
+                                <div class="dropdown-item-btn temp-select" data-key="need" data-value="doc-sach">📖 Máy đọc sách</div>
+                            </div>
+                            <div class="dropdown-action-btns">
+                                <div class="btn-cancel-filter">Đóng</div>
+                                <div class="btn-apply-filter">Xem kết quả</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-dropdown-wrapper">
+                        <div class="criteria-btn drop-trigger">Kích thước màn hình <i class="fa fa-angle-down"></i></div>
+                        <div class="filter-dropdown-content">
+                            <div class="dropdown-grid">
+                                <div class="dropdown-item-btn temp-select" data-key="screen" data-value="mini">Khoảng 7-8 inch</div>
+                                <div class="dropdown-item-btn temp-select" data-key="screen" data-value="standard">Khoảng 10-11 inch</div>
+                                <div class="dropdown-item-btn temp-select" data-key="screen" data-value="large">Từ 12 inch trở lên</div>
+                            </div>
+                            <div class="dropdown-action-btns">
+                                <div class="btn-cancel-filter">Đóng</div>
+                                <div class="btn-apply-filter">Xem kết quả</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-dropdown-wrapper">
+                        <div class="criteria-btn drop-trigger">Dung lượng RAM <i class="fa fa-angle-down"></i></div>
+                        <div class="filter-dropdown-content">
+                            <div class="dropdown-grid">
+                                <div class="dropdown-item-btn temp-select" data-key="ram" data-value="4gb">4GB</div>
+                                <div class="dropdown-item-btn temp-select" data-key="ram" data-value="6gb">6GB</div>
+                                <div class="dropdown-item-btn temp-select" data-key="ram" data-value="8gb">8GB</div>
+                                <div class="dropdown-item-btn temp-select" data-key="ram" data-value="12gb">12GB</div>
+                                <div class="dropdown-item-btn temp-select" data-key="ram" data-value="16gb">16GB</div>
+                            </div>
+                            <div class="dropdown-action-btns">
+                                <div class="btn-cancel-filter">Đóng</div>
+                                <div class="btn-apply-filter">Xem kết quả</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-dropdown-wrapper">
+                        <div class="criteria-btn drop-trigger">Bộ nhớ trong <i class="fa fa-angle-down"></i></div>
+                        <div class="filter-dropdown-content">
+                            <div class="dropdown-grid">
+                                <div class="dropdown-item-btn temp-select" data-key="rom" data-value="64gb">64GB</div>
+                                <div class="dropdown-item-btn temp-select" data-key="rom" data-value="128gb">128GB</div>
+                                <div class="dropdown-item-btn temp-select" data-key="rom" data-value="256gb">256GB</div>
+                                <div class="dropdown-item-btn temp-select" data-key="rom" data-value="512gb">512GB</div>
+                                <div class="dropdown-item-btn temp-select" data-key="rom" data-value="1tb">1TB</div>
+                            </div>
+                            <div class="dropdown-action-btns">
+                                <div class="btn-cancel-filter">Đóng</div>
+                                <div class="btn-apply-filter">Xem kết quả</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="active-filters-container" id="active-filters-area">
+                    <span class="active-filters-label">Đang lọc theo:</span>
+                    <button class="clear-all-btn" onclick="window.location.href = window.location.pathname;">Bỏ chọn tất cả</button>
+                </div>
+
+                <div class="sort-container">
+                    <span class="sort-title">Sắp xếp theo</span>
+                    <div class="sort-buttons">
+                        <a href="javascript:void(0);" class="sort-btn filter-link" data-key="sort" data-value="pop"><i class="fa fa-star-o"></i> Phổ biến</a>
+                        <a href="javascript:void(0);" class="sort-btn filter-link" data-key="sort" data-value="hot"><i class="fa fa-percent"></i> Khuyến mãi HOT</a>
+                        <a href="javascript:void(0);" class="sort-btn filter-link" data-key="sort" data-value="price_asc"><i class="fa fa-sort-amount-asc"></i> Giá Thấp - Cao</a>
+                        <a href="javascript:void(0);" class="sort-btn filter-link" data-key="sort" data-value="price_desc"><i class="fa fa-sort-amount-desc"></i> Giá Cao - Thấp</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                {% for p in tablets %}
+                <div class="col-md-3 col-sm-4 col-xs-6">
+                    <div class="product" style="margin: 0 0 20px 0;">
+                        <span class="sale-badge">Giảm {{ p.discount }}%</span>
+                        <span class="installment-badge">Trả góp 0%</span>
+
+                        <div class="product-img-container">
+                            <a href="{% url 'detail' p.id %}">
+                                {% if p.image %}
+                                <img src="{{ p.image.url }}" alt="{{ p.name }}">
+                                {% else %}
+                                <img src="{% static 'home/img/no-image.png' %}" alt="No Image">
+                                {% endif %}
+                            </a>
+                        </div>
+
+                        <div class="product-body">
+                            <h3 class="product-name">
+                                <a href="{% url 'detail' p.id %}">{{ p.name|upper }} </a>
+                            </h3>
+
+                            <div class="product-price">
+                                <span class="new-price">{{ p.price|intcomma }}đ</span>
+                                {% if p.old_price > 0 %}
+                                <span class="old-price">{{ p.old_price|intcomma }}đ</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="tech-specs">
+                                {% if p.specifications %}
+                                {{ p.specifications|linebreaksbr }}
+                                {% else %}
+                                Thông tin đang cập nhật...
+                                {% endif %}
+                            </div>
+
+                            <div class="product-footer-center wishlist-btn" data-url="{% url 'add_to_wishlist' p.id %}" style="display: block; cursor: pointer; text-decoration: none;">
+                                {% if p.id in wishlist_product_ids %}
+                                <i class="fa fa-heart" style="color: #D10024;"></i> <span style="color: #D10024;">Đã thích</span>
+                                {% else %}
+                                <i class="fa fa-heart-o" style="color: #448aff;"></i> <span style="color: #448aff;">Yêu thích</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer">
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 col-xs-6">
+                        <div class="footer">
+                            <h3 class="footer-title">Về chúng tôi</h3>
+                            <p>Chuyên cung cấp các thiết bị di động, laptop chính hãng với giá cạnh tranh nhất.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="bottom-footer" class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <span class="copyright">Bản quyền © 2026 - Nguyễn Duy Vũ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'home/js/jquery.min.js' %}"></script>
+    <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'home/js/slick.min.js' %}"></script>
+    <script src="{% static 'home/js/nouislider.min.js' %}"></script>
+    <script src="{% static 'home/js/jquery.zoom.min.js' %}"></script>
+    <script src="{% static 'home/js/main.js' %}"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeFiltersArea = document.getElementById('active-filters-area');
+            let hasActiveFilters = false;
+
+            const labelDictionary = {
+                'brand': 'Hãng', 'stock': 'Sẵn hàng', 'new_arrival': 'Mới về',
+                'price': 'Giá', 'need': 'Nhu cầu', 'sort': 'Sắp xếp',
+                'ram': 'RAM', 'rom': 'Bộ nhớ trong', 'screen': 'Màn hình'
+            };
+
+            const valueDictionary = {
+                'true': '',
+                'price_asc': 'Thấp đến Cao', 'price_desc': 'Cao đến Thấp', 'hot': 'Khuyến mãi HOT', 'pop': 'Phổ biến',
+                'duoi-2t': 'Dưới 2 triệu', '2t-5t': 'Từ 2 - 5 triệu', '5t-8t': 'Từ 5 - 8 triệu', '8t-15t': 'Từ 8 - 15 triệu', 'tren-15t': 'Trên 15 triệu',
+                'tre-em': 'Cho trẻ em', 'game': 'Chơi game', 've-do-hoa': 'Đồ họa - Sáng tạo', 'hoc-tap': 'Học tập - Văn phòng', 'doc-sach': 'Máy đọc sách',
+                '4gb': '4GB', '6gb': '6GB', '8gb': '8GB', '12gb': '12GB', '16gb': '16GB',
+                '64gb': '64GB', '128gb': '128GB', '256gb': '256GB', '512gb': '512GB', '1tb': '1TB',
+                'mini': 'Khoảng 7-8 inch', 'standard': 'Khoảng 10-11 inch', 'large': 'Từ 12 inch trở lên'
+            };
+
+            // Duyệt thẻ filter-link
+            document.querySelectorAll('.filter-link').forEach(link => {
+                const key = link.getAttribute('data-key');
+                const value = link.getAttribute('data-value');
+                if (urlParams.get(key) === value) {
+                    if (key === 'brand') link.classList.add('active-brand');
+                    else if (key === 'sort') link.classList.add('active-sort');
+                    else link.classList.add('active-filter');
+                }
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    if (urlParams.get(key) === value) urlParams.delete(key);
+                    else urlParams.set(key, value);
+                    window.location.href = window.location.pathname + '?' + urlParams.toString();
+                });
+            });
+
+            // Xử lý Tag Đang lọc
+            urlParams.forEach((value, key) => {
+                if (labelDictionary[key]) {
+                    hasActiveFilters = true;
+                    let displayValue = valueDictionary[value] !== undefined ? valueDictionary[value] : value;
+                    let tagText = displayValue ? `${labelDictionary[key]}: ${displayValue}` : labelDictionary[key];
+                    let tag = document.createElement('span');
+                    tag.className = 'active-tag';
+                    tag.innerHTML = `${tagText} <i class="fa fa-times remove-filter-btn" data-key="${key}"></i>`;
+                    activeFiltersArea.insertBefore(tag, activeFiltersArea.lastElementChild);
+                    document.querySelectorAll('.dropdown-item-btn').forEach(btn => {
+                        if (btn.getAttribute('data-key') === key && btn.getAttribute('data-value') === value) {
+                            btn.closest('.filter-dropdown-wrapper').querySelector('.drop-trigger').classList.add('active-filter');
+                        }
+                    });
+                }
+            });
+
+            if (hasActiveFilters) activeFiltersArea.style.display = 'flex';
+
+            document.querySelectorAll('.remove-filter-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    urlParams.delete(this.getAttribute('data-key'));
+                    window.location.href = window.location.pathname + '?' + urlParams.toString();
+                });
+            });
+
+            // UI Dropdown
+            document.querySelectorAll('.drop-trigger').forEach(trigger => {
+                trigger.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    let dropdownContent = this.nextElementSibling;
+                    document.querySelectorAll('.filter-dropdown-content').forEach(d => {
+                        if (d !== dropdownContent) d.classList.remove('show');
+                    });
+                    dropdownContent.classList.toggle('show');
+                });
+            });
+
+            let tempParams = new URLSearchParams(window.location.search);
+            document.querySelectorAll('.dropdown-item-btn.temp-select').forEach(btn => {
+                const key = btn.getAttribute('data-key');
+                const val = btn.getAttribute('data-value');
+                if (tempParams.get(key) === val) btn.classList.add('selected');
+
+                btn.addEventListener('click', function () {
+                    const siblings = this.parentElement.querySelectorAll(`.dropdown-item-btn[data-key="${key}"]`);
+                    siblings.forEach(s => s.classList.remove('selected'));
+                    this.classList.add('selected');
+                    tempParams.set(key, val);
+                });
+            });
+
+            document.querySelectorAll('.btn-apply-filter').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    window.location.href = window.location.pathname + '?' + tempParams.toString();
+                });
+            });
+
+            document.querySelectorAll('.btn-cancel-filter').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    this.closest('.filter-dropdown-content').classList.remove('show');
+                });
+            });
+
+            // CHỐNG LỖI TỰ ĐÓNG BẢNG
+            window.onclick = function (event) {
+                if (!event.target.matches('.drop-trigger') && !event.target.closest('.filter-dropdown-content')) {
+                    document.querySelectorAll(".filter-dropdown-content").forEach(d => d.classList.remove('show'));
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

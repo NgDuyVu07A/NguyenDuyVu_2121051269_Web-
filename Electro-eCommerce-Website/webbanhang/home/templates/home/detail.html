@@ -7,129 +7,606 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Electro - {{ product.name }}</title>
+    <title>{{ product.name }} - Electro</title>
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
-
     <link type="text/css" rel="stylesheet" href="{% static 'home/css/bootstrap.min.css' %}" />
     <link type="text/css" rel="stylesheet" href="{% static 'home/css/slick.css' %}" />
     <link type="text/css" rel="stylesheet" href="{% static 'home/css/slick-theme.css' %}" />
-    <link type="text/css" rel="stylesheet" href="{% static 'home/css/nouislider.min.css' %}" />
     <link rel="stylesheet" href="{% static 'home/css/font-awesome.min.css' %}">
     <link type="text/css" rel="stylesheet" href="{% static 'home/css/style.css' %}" />
 
     <style>
-        /* CSS BO GÓC THANH TÌM KIẾM ĐỒNG BỘ TRANG CHỦ */
+        /* --- CSS HEADER --- */
+        #top-header {
+            display: none;
+        }
+
+        #header {
+            background-color: #1E1F29 !important;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: none;
+        }
+
+        .header-logo img {
+            filter: brightness(0) invert(1);
+            max-height: 40px;
+        }
+
+        .header-main-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .btn-header-category {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #fff !important;
+            border-radius: 10px;
+            height: 42px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none !important;
+            transition: 0.2s;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-header-category:hover {
+            background-color: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        .header-search {
+            flex-grow: 1;
+            margin: 0;
+        }
+
+        .header-search form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 42px;
+            background: #fff;
+            border-radius: 40px;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
         .header-search form .input {
-            border-radius: 40px 0px 0px 40px !important;
-            width: calc(100% - 100px) !important;
-            padding: 0px 20px !important;
+            border: none !important;
+            outline: none !important;
+            flex-grow: 1;
+            height: 100% !important;
+            padding: 0 20px !important;
+            font-size: 14px;
+            background: transparent;
         }
 
         .header-search form .search-btn {
-            border-radius: 0px 40px 40px 0px !important;
-            width: 100px !important;
+            background: #D10024;
+            color: #fff;
+            border: none;
+            height: 100%;
+            padding: 0 25px;
+            font-weight: bold;
+            border-radius: 0 40px 40px 0;
+            transition: 0.3s;
         }
 
-        /* CSS phụ cho phần Review hiển thị đẹp hơn */
-        .review-heading { margin-bottom: 5px; }
-        .review-heading h5 { display: inline-block; margin-right: 15px; margin-top: 0;}
-        .review-heading .date { color: #999; font-size: 12px; display: inline-block; margin-right: 15px;}
-        .review-rating { display: inline-block; color: #D10024; }
-        .review-rating .empty { color: #E4E7ED; }
-        .review-body { margin-bottom: 20px; }
+        .cart-qty-badge {
+            background: #fff;
+            color: #D10024;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 7px;
+            border-radius: 10px;
+            margin-left: 5px;
+        }
+
+        /* --- CSS TRANG CHI TIẾT SẢN PHẨM KHÚC TRÊN --- */
+        body {
+            background-color: #f4f6f8;
+        }
+
+        .cps-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .product-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .product-rating {
+            color: #f39c12;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+
+        .product-rating span {
+            color: #2196F3;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        /* SLIDER ẢNH */
+        .slider-main {
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .slider-main .slick-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            padding: 20px;
+            outline: none;
+        }
+
+        .slider-main .slick-slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .slider-thumb {
+            padding: 0 20px;
+        }
+
+        .slider-thumb .slick-slide {
+            cursor: pointer;
+            padding: 5px;
+            outline: none;
+        }
+
+        .slider-thumb .slick-slide img {
+            width: 100%;
+            height: 65px;
+            object-fit: contain;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            transition: 0.2s;
+            padding: 5px;
+            background: #fff;
+        }
+
+        .slider-thumb .slick-current img {
+            border: 2px solid #D10024;
+        }
+
+        .slick-prev:before,
+        .slick-next:before {
+            color: #999;
+            font-size: 24px;
+        }
+
+        /* GIÁ & THÔNG TIN BÊN PHẢI */
+        .cps-price-box {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cps-current-price {
+            font-size: 26px;
+            font-weight: bold;
+            color: #d70018;
+        }
+
+        .cps-old-price {
+            font-size: 15px;
+            text-decoration: line-through;
+            color: #707070;
+        }
+
+        /* BẢNG MÀU SẮC */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .color-item {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .color-item:hover {
+            border-color: #d70018;
+        }
+
+        .color-item.active {
+            border-color: #d70018;
+            position: relative;
+            background-color: #fffafb;
+            box-shadow: 0 2px 5px rgba(215, 0, 24, 0.1);
+        }
+
+        .color-item.active::after {
+            content: '\f00c';
+            font-family: 'FontAwesome';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #d70018;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+        }
+
+        .color-img {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+        }
+
+        .color-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .color-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .color-price {
+            font-size: 12px;
+            font-weight: 600;
+            color: #d70018;
+        }
+
+        /* KHUNG ĐẶC ĐIỂM NỔI BẬT */
+        .short-desc-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .short-desc-title {
+            font-weight: bold;
+            color: #d70018;
+            margin-bottom: 10px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+
+        .short-desc-content {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .short-desc-content ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .short-desc-content li {
+            margin-bottom: 6px;
+        }
+
+        /* NÚT BẤM */
+        .btn-group-buy {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-buy-now {
+            flex: 2;
+            background-color: #d70018;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-buy-now span {
+            font-size: 12px;
+            font-weight: normal;
+            text-transform: none;
+        }
+
+        .btn-buy-now:hover {
+            background-color: #b90015;
+            color: #fff;
+        }
+
+        .btn-add-cart {
+            flex: 1;
+            background-color: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .btn-add-cart i {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .btn-add-cart:hover {
+            background-color: #1d4ed8;
+            color: #fff;
+        }
+
+        /* --- CSS KHU VỰC BÊN DƯỚI (TABS & TIN TỨC) --- */
+        .tab-box-container {
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
+            padding: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .custom-detail-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 25px;
+            padding: 0;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .custom-detail-tabs li a {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: #888;
+            padding-bottom: 15px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            background: transparent;
+            transition: 0.2s;
+        }
+
+        .custom-detail-tabs li.active a {
+            color: #333;
+        }
+
+        .tab-content-inner {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .tab-content-inner img {
+            max-width: 100%;
+            height: auto !important;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        /* CSS CHO REVIEWS */
+        .review-item {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 15px 0;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .review-user {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .review-stars {
+            color: #f39c12;
+            font-size: 12px;
+        }
+
+        .review-text {
+            font-size: 13.5px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* CSS CỘT TIN TỨC */
+        .news-sidebar-box {
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #f0f0f0;
+            padding: 25px 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .news-sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .news-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            text-decoration: none !important;
+            transition: 0.2s;
+            align-items: flex-start;
+        }
+
+        .news-item:hover h4 {
+            color: #d70018;
+        }
+
+        .news-thumb {
+            width: 90px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+
+        .news-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .news-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.4;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            /* <--- EM CHỈ CẦN THÊM DÒNG NÀY VÀO LÀ HẾT CẢNH BÁO */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .wishlist-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            border: 1px solid #2ecc71;
+            border-radius: 12px;
+            padding: 12px 25px;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            color: #2ecc71;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 
 <body>
-    <!-- HEADER -->
-    <header>
-        <div id="top-header">
-            <div class="container">
-                <ul class="header-links pull-right">
-                    {% if user.is_authenticated %}
-                    <li><a href="#"><i class="fa fa-user"></i> Xin chào, {{ user.username }}</a></li>
-                    <li style="display:inline-block;">
-                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit"
-                                style="background:none; border:none; color:#fff; font-size:12px; cursor: pointer;">
-                                <i class="fa fa-sign-out"></i> Đăng xuất
-                            </button>
-                        </form>
-                    </li>
-                    {% else %}
-                    <li><a href="{% url 'login' %}"><i class="fa fa-user"></i> Đăng nhập</a></li>
-                    <li><a href="{% url 'register' %}"><i class="fa fa-user-plus"></i> Đăng ký</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
+    <div id="wishlist-toast" class="wishlist-toast">
+        <i class="fa fa-check-circle"></i>
+        <span id="toast-message">Đã thêm vào giỏ hàng!</span>
+    </div>
 
+    <header>
         <div id="header">
             <div class="container">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="header-logo">
-                            <a href="/" class="logo">
-                                <img src="{% static 'home/img/logo.png' %}" alt="">
-                            </a>
-                        </div>
+                <div class="header-main-row">
+                    <div class="header-logo">
+                        <a href="/" class="logo">
+                            <img src="{% static 'home/img/logo.png' %}" alt="Electro">
+                        </a>
                     </div>
-                    <div class="col-md-6">
-                        <div class="header-search">
-                            <form action="/" method="GET">
-                                <input class="input" name="q" placeholder="Săn Deal hời ngay...">
-                                <button class="search-btn" type="submit">Tìm kiếm</button>
-                            </form>
-                        </div>
+                    <a href="/" class="btn-header-category">
+                        <i class="fa fa-bars" style="color: #fff !important; font-size: 16px;"></i> <span>Về Trang chủ</span>
+                    </a>
+                    <div class="header-search">
+                        <form action="." method="GET">
+                            <input class="input" name="q" placeholder="Bạn muốn mua gì hôm nay?">
+                            <button class="search-btn" type="submit">Tìm kiếm</button>
+                        </form>
                     </div>
-                    <div class="col-md-3 clearfix">
-                        <div class="header-ctn">
-                            <div>
-                                <a href="{% url 'cart' %}">
-                                    <i class="fa fa-shopping-cart"></i>
-                                    <span>Giỏ hàng</span>
-                                </a>
-                            </div>
-                            <div class="menu-toggle">
-                                <a href="#">
-                                    <i class="fa fa-bars"></i>
-                                    <span>Menu</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    <a href="{% url 'cart' %}" class="btn-header-category" style="background: transparent !important; padding: 0 10px;">
+                        <i class="fa fa-shopping-cart" style="font-size: 22px; color: #fff !important;"></i>
+                        <span style="font-size: 14px;">Giỏ hàng</span>
+                        <span class="cart-qty-badge" id="cart-total" {% if cartItems == 0 %}style="display: none;" {% endif %}>{{ cartItems }}</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="btn-header-category">
+                        <i class="fa fa-user-circle-o" style="font-size: 20px; color: #fff !important;"></i>
+                        <span style="max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ user.username }}</span>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn-header-category">
+                        <i class="fa fa-user-circle-o" style="font-size: 20px; color: #fff !important;"></i> Đăng nhập
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- NAVIGATION -->
-    <nav id="navigation">
-        <div class="container">
-            <div id="responsive-nav">
-                <ul class="main-nav nav navbar-nav">
-                    <li><a href="/">Trang chủ</a></li>
-                    <li><a href="#">Khuyến mãi Hot</a></li>
-                    <li><a href="#">Danh mục</a></li>
-                    <li><a href="#">Laptop</a></li>
-                    <li><a href="#">Điện thoại</a></li>
-                    <li><a href="#">Máy ảnh</a></li>
-                    <li><a href="#">Phụ kiện</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- BREADCRUMB -->
-    <div id="breadcrumb" class="section">
+    <div id="breadcrumb" class="section" style="padding: 15px 0 0 0; border: none; background: transparent;">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <ul class="breadcrumb-tree">
-                        <li><a href="/">Trang chủ</a></li>
-                        <li><a href="#">Danh mục</a></li>
+                    <ul class="breadcrumb" style="background: transparent; padding: 0; margin: 0; font-size: 13px;">
+                        <li><a href="/" style="color: #d70018;"><i class="fa fa-home"></i> Trang chủ</a></li>
+                        <li><a href="#" style="color: #d70018;">{{ product.category.name }}</a></li>
                         <li class="active">{{ product.name }}</li>
                     </ul>
                 </div>
@@ -137,203 +614,191 @@
         </div>
     </div>
 
-    <!-- PHẦN THÂN CHI TIẾT SẢN PHẨM -->
-    <div class="section">
-        <div class="container">
-            <div class="row">
-                <!-- CỘT ẢNH TO -->
-                <div class="col-md-5 col-md-push-2">
-                    <div id="product-main-img">
-                        <!-- Hiển thị ảnh chính trước -->
-                        {% if product.image %}
-                        <div class="product-preview">
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        </div>
+    <div class="container cps-container" style="margin-top: 15px;">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="product-title">{{ product.name }}</h1>
+
+                <div class="product-rating">
+                    {% if product.reviews.count > 0 %}
+                    <i class="fa fa-star{% if product.get_rating_stars >= 1 %}{% else %}-o{% endif %}"></i>
+                    <i class="fa fa-star{% if product.get_rating_stars >= 2 %}{% else %}-o{% endif %}"></i>
+                    <i class="fa fa-star{% if product.get_rating_stars >= 3 %}{% else %}-o{% endif %}"></i>
+                    <i class="fa fa-star{% if product.get_rating_stars >= 4 %}{% else %}-o{% endif %}"></i>
+                    <i class="fa fa-star{% if product.get_rating_stars >= 5 %}{% else %}-o{% endif %}"></i>
+                    <span style="color: #d70018; font-weight: 700; margin-left: 5px;">{{ product.get_avg_rating }}/5</span>
+                    {% else %}
+                    <i class="fa fa-star-o"></i>
+                    <i class="fa fa-star-o"></i>
+                    <i class="fa fa-star-o"></i>
+                    <i class="fa fa-star-o"></i>
+                    <i class="fa fa-star-o"></i>
+                    {% endif %}
+                    <span>(Đã có {{ product.reviews.count }} đánh giá)</span>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="slider-main">
+                    {% if product.image %}
+                    <div><img src="{{ product.image.url }}" alt="{{ product.name }}"></div>
+                    {% endif %}
+                    {% for img in product.images.all %}
+                    <div><img src="{{ img.image.url }}" alt="Gallery Image"></div>
+                    {% endfor %}
+                </div>
+                <div class="slider-thumb">
+                    {% if product.image %}
+                    <div><img src="{{ product.image.url }}" alt="{{ product.name }}"></div>
+                    {% endif %}
+                    {% for img in product.images.all %}
+                    <div><img src="{{ img.image.url }}" alt="Gallery Thumb"></div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="cps-price-box">
+                    <div class="cps-current-price">{{ product.price|intcomma }}đ</div>
+                    {% if product.old_price > product.price %}
+                    <div class="cps-old-price">{{ product.old_price|intcomma }}đ</div>
+                    {% endif %}
+                </div>
+
+                {% if product.colors.all %}
+                <div style="font-weight: 700; color: #333; margin-bottom: 10px; font-size: 14px;">Chọn màu để xem giá:</div>
+                <div class="color-grid">
+                    {% for color in product.colors.all %}
+                    <div class="color-item {% if forloop.first %}active{% endif %}" onclick="selectColor(this)">
+                        {% if color.image %}
+                        <img src="{{ color.image.url }}" class="color-img">
+                        {% else %}
+                        <div class="color-img" style="background: #eee; border-radius: 5px;"></div>
                         {% endif %}
-                        <!-- Vòng lặp hiển thị các ảnh phụ từ Database -->
-                        {% for img in product.images.all %}
-                        <div class="product-preview">
-                            <img src="{{ img.image.url }}" alt="{{ product.name }}">
+                        <div class="color-info">
+                            <span class="color-name">{{ color.name }}</span>
+                            <span class="color-price">{{ color.price|intcomma }}đ</span>
                         </div>
-                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="short-desc-box">
+                    <div class="short-desc-title"><i class="fa fa-info-circle"></i> Đặc điểm nổi bật</div>
+                    <div class="short-desc-content">
+                        {% if product.short_description %}
+                        {{ product.short_description|safe|linebreaksbr }}
+                        {% else %}
+                        <p>Đang cập nhật đặc điểm nổi bật của sản phẩm...</p>
+                        {% endif %}
                     </div>
                 </div>
 
-                <!-- CỘT ẢNH NHỎ THUMBNAIL (BÊN TRÁI) -->
-                <div class="col-md-2  col-md-pull-5">
-                    <div id="product-imgs">
-                        <!-- Ảnh chính -->
-                        {% if product.image %}
-                        <div class="product-preview">
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        </div>
-                        {% endif %}
-                        <!-- Vòng lặp các ảnh phụ -->
-                        {% for img in product.images.all %}
-                        <div class="product-preview">
-                            <img src="{{ img.image.url }}" alt="{{ product.name }}">
-                        </div>
-                        {% endfor %}
-                    </div>
+                <div class="btn-group-buy">
+                    <button class="btn-buy-now">
+                        Mua ngay
+                        <span>Giao hàng tận nơi hoặc nhận tại cửa hàng</span>
+                    </button>
+                    <a href="javascript:void(0);" class="btn-add-cart" id="add-to-cart-btn" data-url="{% url 'add_to_cart' product.id %}">
+                        <i class="fa fa-cart-plus"></i>
+                        Thêm vào giỏ
+                    </a>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <!-- CỘT THÔNG TIN SẢN PHẨM BÊN PHẢI -->
-                <div class="col-md-5">
-                    <div class="product-details">
-                        <h2 class="product-name">{{ product.name }}</h2>
-                        <div>
-                            <div class="product-rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star-o"></i>
-                            </div>
-                            <!-- Đếm số lượng review thực tế -->
-                            <a class="review-link" href="#product-tab">{{ product.reviews.count }} Đánh giá</a>
+    <div class="container" style="margin-bottom: 50px;">
+        <div class="row">
+
+            <div class="col-md-8">
+                <div class="tab-box-container">
+                    <ul class="nav custom-detail-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#tab-desc" aria-controls="tab-desc" role="tab" data-toggle="tab">Mô tả sản phẩm</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#tab-specs" aria-controls="tab-specs" role="tab" data-toggle="tab">Thông số kỹ thuật</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#tab-reviews" aria-controls="tab-reviews" role="tab" data-toggle="tab">Đánh giá ({{ product.reviews.count|default:"0" }})</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active tab-content-inner" id="tab-desc">
+                            {% if product.description %}
+                            {{ product.description|safe }}
+                            {% else %}
+                            <p style="color: #888; font-style: italic;">Đang cập nhật bài viết đánh giá chi tiết...</p>
+                            {% endif %}
                         </div>
-                        <div>
-                            <!-- Hiển thị giá hiện tại và Giá cũ (nếu có) -->
-                            <h3 class="product-price">{{ product.price|intcomma }} VNĐ 
-                                {% if product.old_price > 0 %}
-                                <del class="product-old-price" style="color: #999; font-size: 16px; margin-left: 10px;">{{ product.old_price|intcomma }} VNĐ</del>
+
+                        <div role="tabpanel" class="tab-pane tab-content-inner" id="tab-specs">
+                            {% if product.detailed_specifications %}
+                            {{ product.detailed_specifications|safe }}
+                            {% else %}
+                            <p style="color: #888; font-style: italic;">Đang cập nhật bảng thông số kỹ thuật...</p>
+                            {% endif %}
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane tab-content-inner" id="tab-reviews">
+                            <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;">
+                                {% if product.reviews.all %}
+                                {% for review in product.reviews.all %}
+                                <div class="review-item">
+                                    <div class="review-meta">
+                                        <span class="review-user"><i class="fa fa-user-circle" style="color: #777;"></i> {{ review.user_name }}</span>
+                                        <span class="review-stars">
+                                            {% if review.rating == 5 %}⭐⭐⭐⭐⭐
+                                            {% elif review.rating == 4 %}⭐⭐⭐⭐
+                                            {% elif review.rating == 3 %}⭐⭐⭐
+                                            {% elif review.rating == 2 %}⭐⭐
+                                            {% else %}⭐{% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="review-text">{{ review.comment }}</div>
+                                    <span style="font-size: 11px; color: #aaa;">Ngày: {{ review.created_at|date:"d/m/Y" }}</span>
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <p style="color: #888; font-style: italic; text-align: center; padding: 30px 0;">Sản phẩm chưa có đánh giá nào từ khách hàng.</p>
                                 {% endif %}
-                            </h3>
-                            <span class="product-available">Còn hàng</span>
-                        </div>
-                        
-                        <!-- Hiển thị MÔ TẢ NGẮN (từ Admin) -->
-                        <p>{% if product.short_description %}{{ product.short_description|linebreaksbr }}{% else %}Đang cập nhật mô tả...{% endif %}</p>
-
-                        <div class="product-options">
-                            <label>
-                                Danh mục: {{ product.category }}
-                            </label>
-                        </div>
-
-                        <div class="add-to-cart">
-                            <div class="qty-label">
-                                Số lượng
-                                <div class="input-number">
-                                    <input type="number" value="1">
-                                    <span class="qty-up">+</span>
-                                    <span class="qty-down">-</span>
-                                </div>
                             </div>
-                            <!-- Form thêm vào giỏ hàng thật (Sử dụng link /cart/add/... của bạn) -->
-                            <a href="{% url 'add_to_cart' product.id %}" class="add-to-cart-btn" style="display:inline-block; text-align:center;"><i class="fa fa-shopping-cart"></i> Thêm vào giỏ</a>
-                        </div>
-
-                        <ul class="product-btns">
-                            <li><a href="#"><i class="fa fa-heart-o"></i> Thêm vào yêu thích</a></li>
-                            <li><a href="#"><i class="fa fa-exchange"></i> So sánh</a></li>
-                        </ul>
-
-                        <ul class="product-links">
-                            <li>Chia sẻ:</li>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                            <li><a href="#"><i class="fa fa-envelope"></i></a></li>
-                        </ul>
-
-                    </div>
-                </div>
-
-                <!-- KHU VỰC CÁC TAB CHI TIẾT DƯỚI CÙNG -->
-                <div class="col-md-12">
-                    <div id="product-tab">
-                        <ul class="tab-nav">
-                            <li class="active"><a data-toggle="tab" href="#tab1">Mô tả chi tiết</a></li>
-                            <li><a data-toggle="tab" href="#tab2">Thông số kỹ thuật</a></li>
-                            <li><a data-toggle="tab" href="#tab3">Đánh giá ({{ product.reviews.count }})</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <!-- TAB 1: BÀI VIẾT MÔ TẢ -->
-                            <div id="tab1" class="tab-pane fade in active">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p>{% if product.description %}{{ product.description|linebreaksbr }}{% else %}Nội dung đang được cập nhật...{% endif %}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- TAB 2: THÔNG SỐ KỸ THUẬT -->
-                            <div id="tab2" class="tab-pane fade in">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p>{% if product.specifications %}{{ product.specifications|linebreaksbr }}{% else %}Thông số kỹ thuật đang được cập nhật...{% endif %}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- TAB 3: ĐÁNH GIÁ TỪ ADMIN -->
-                            <div id="tab3" class="tab-pane fade in">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div id="reviews">
-                                            <ul class="reviews">
-                                                {% for review in product.reviews.all %}
-                                                <li>
-                                                    <div class="review-heading">
-                                                        <h5 class="name"><i class="fa fa-user-circle"></i> {{ review.user_name }}</h5>
-                                                        <p class="date">{{ review.created_at|date:"d/m/Y H:i" }}</p>
-                                                        <div class="review-rating">
-                                                            <!-- Vòng lặp in số sao động theo điểm rating (1-5) -->
-                                                            {% for i in "12345" %}
-                                                                {% if forloop.counter <= review.rating %}
-                                                                    <i class="fa fa-star"></i>
-                                                                {% else %}
-                                                                    <i class="fa fa-star-o empty"></i>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                        </div>
-                                                    </div>
-                                                    <div class="review-body">
-                                                        <p>{{ review.comment|linebreaksbr }}</p>
-                                                    </div>
-                                                    <hr>
-                                                </li>
-                                                {% empty %}
-                                                <p style="text-align:center; padding: 30px; color:#999;">Chưa có đánh giá nào cho sản phẩm này.</p>
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- NEWSLETTER -->
-    <div id="newsletter" class="section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="newsletter">
-                        <p>Đăng ký nhận <strong>BẢN TIN KHUYẾN MÃI</strong></p>
-                        <form>
-                            <input class="input" type="email" placeholder="Nhập Email của bạn">
-                            <button class="newsletter-btn"><i class="fa fa-envelope"></i> Đăng ký</button>
-                        </form>
-                        <ul class="newsletter-follow">
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                            <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                            <li><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                        </ul>
-                    </div>
+            <div class="col-md-4">
+                <div class="news-sidebar-box" style="position: sticky; top: 20px;">
+                    <h3 class="news-sidebar-title">Tin tức liên quan</h3>
+
+                    {% if news_list %}
+                    {% for news in news_list %}
+                    <a href="#" class="news-item">
+                        {% if news.image %}
+                        <img src="{{ news.image.url }}" class="news-thumb" alt="{{ news.title }}">
+                        {% else %}
+                        <img src="{% static 'home/img/no-image.png' %}" class="news-thumb" alt="No image">
+                        {% endif %}
+
+                        <div class="news-info">
+                            <h4>{{ news.title }}</h4>
+                            <span style="font-size: 11px; color: #888;"><i class="fa fa-clock-o"></i> {{ news.date_added|date:"d/m/Y" }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    {% else %}
+                    <p style="color: #777; font-size: 13px; font-style: italic;">Chưa có tin tức nào.</p>
+                    {% endif %}
                 </div>
             </div>
+
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer id="footer">
         <div class="section">
             <div class="container">
@@ -343,8 +808,7 @@
                             <h3 class="footer-title">Về chúng tôi</h3>
                             <p>Chuyên cung cấp các thiết bị di động, laptop chính hãng với giá cạnh tranh nhất.</p>
                             <ul class="footer-links">
-                                <li><a href="#"><i class="fa fa-map-marker"></i>Số 18, Phố Viên, Bắc Từ Liêm, HN</a>
-                                </li>
+                                <li><a href="#"><i class="fa fa-map-marker"></i>Số 18, Phố Viên, Bắc Từ Liêm, HN</a></li>
                                 <li><a href="#"><i class="fa fa-phone"></i>+84 123 456 789</a></li>
                                 <li><a href="#"><i class="fa fa-envelope-o"></i>contact@electro.com</a></li>
                             </ul>
@@ -364,13 +828,60 @@
         </div>
     </footer>
 
-    <!-- SCRIPTS -->
     <script src="{% static 'home/js/jquery.min.js' %}"></script>
     <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'home/js/slick.min.js' %}"></script>
-    <script src="{% static 'home/js/nouislider.min.js' %}"></script>
-    <script src="{% static 'home/js/jquery.zoom.min.js' %}"></script>
-    <script src="{% static 'home/js/main.js' %}"></script>
 
+    <script>
+        $(document).ready(function () {
+            $('.slider-main').slick({
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: false,
+                fade: true,
+                asNavFor: '.slider-thumb'
+            });
+
+            $('.slider-thumb').slick({
+                slidesToShow: 5,
+                slidesToScroll: 1,
+                asNavFor: '.slider-main',
+                dots: false,
+                centerMode: false,
+                focusOnSelect: true,
+                arrows: true
+            });
+
+            $('#add-to-cart-btn').click(function (e) {
+                e.preventDefault();
+                var url = $(this).data('url');
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        const cartBadge = document.getElementById('cart-total');
+                        cartBadge.innerText = data.cart_items;
+                        cartBadge.style.display = 'inline-block';
+
+                        const toast = document.getElementById('wishlist-toast');
+                        const message = document.getElementById('toast-message');
+                        message.innerText = data.message;
+                        toast.style.display = 'flex';
+                        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+                    });
+            });
+        });
+
+        function selectColor(element) {
+            var items = document.querySelectorAll('.color-item');
+            items.forEach(function (item) {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+    </script>
 </body>
+
 </html>

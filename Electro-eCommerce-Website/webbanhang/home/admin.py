@@ -1,7 +1,21 @@
 from django.contrib import admin
-from .models import Category, Product, Order, OrderItem, ProductImage, Review
+from .models import Category, Product, Order, OrderItem, ProductImage, Review, ProductColor
+from .models import News
+
+# --- ĐỔI TÊN TIÊU ĐỀ TRANG ADMIN TẠI ĐÂY ---
+admin.site.site_header = "Hệ thống quản trị Electro"
+admin.site.site_title = "Quản trị Electro"
+admin.site.index_title = "Bảng điều khiển Electro"
+
+@admin.register(News)
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('title', 'date_added')
 
 # --- TẠO KHUNG (INLINE) ĐỂ NHÚNG VÀO TRANG SẢN PHẨM ---
+class ProductColorInline(admin.TabularInline):
+    model = ProductColor
+    extra = 0 # Mặc định không hiện ô trống, khi nào cần thêm màu thì bấm nút Add
+
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 4 # Hiển thị sẵn 4 ô trống để up ảnh phụ
@@ -12,11 +26,13 @@ class ReviewInline(admin.TabularInline):
 
 # 1. Cấu hình hiển thị cho Sản phẩm
 class ProductAdmin(admin.ModelAdmin):
-    # NHÚNG 2 KHUNG VỪA TẠO VÀO DƯỚI CÙNG TRANG SỬA SẢN PHẨM
-    inlines = [ProductImageInline, ReviewInline]
+    # NHÚNG 3 KHUNG VỪA TẠO VÀO DƯỚI CÙNG TRANG SỬA SẢN PHẨM
+    inlines = [ProductColorInline, ProductImageInline, ReviewInline]
     
     # Các cột hiển thị ở danh sách ngoài trang Admin
-    list_display = ('name', 'get_price', 'get_old_price', 'discount', 'category')
+    list_display = ('name', 'price', 'is_available', 'category', 'date_added')
+
+    list_editable = ('is_available',)
     
     # Cho phép tìm kiếm nhanh theo tên
     search_fields = ('name',)
