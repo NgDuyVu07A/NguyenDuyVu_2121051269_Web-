@@ -853,7 +853,7 @@
                             </li>
 
                             <li class="has-submenu">
-                                <a href="#">
+                                <a href="{% url 'laptop' %}">
                                     <div class="menu-item-left"><i class="fa fa-laptop" style="font-size: 18px;"></i> Laptop</div>
                                     <i class="fa fa-angle-right"></i>
                                 </a>
@@ -861,66 +861,66 @@
                                     <div class="submenu-column" style="flex: 1.2;">
                                         <div class="submenu-title">Thương hiệu</div>
                                         <div class="mega-grid-3">
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800;">MacBook</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #00539b;">ASUS</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #e2231a;">Lenovo</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #0076ce;">DELL</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #0096d6;">HP</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #83b817;">acer</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #ea002a;">LG</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #cc0000;">msi</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #000;">GIGABYTE</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800;">Surface</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #e51b23;">Masstel</a>
-                                            <a href="#" class="mega-grid-item" style="font-weight: 800; color: #1428a0;">SAMSUNG</a>
+                                            <a href="{% url 'laptop' %}?brand=MacBook" class="mega-grid-item" style="font-weight: 800;">MacBook</a>
+                                            <a href="{% url 'laptop' %}?brand=ASUS" class="mega-grid-item" style="font-weight: 800; color: #00539b;">ASUS</a>
+                                            <a href="{% url 'laptop' %}?brand=Lenovo" class="mega-grid-item" style="font-weight: 800; color: #e2231a;">Lenovo</a>
+                                            <a href="{% url 'laptop' %}?brand=DELL" class="mega-grid-item" style="font-weight: 800; color: #0076ce;">DELL</a>
+                                            <a href="{% url 'laptop' %}?brand=HP" class="mega-grid-item" style="font-weight: 800; color: #0096d6;">HP</a>
+                                            <a href="{% url 'laptop' %}?brand=acer" class="mega-grid-item" style="font-weight: 800; color: #83b817;">acer</a>
+                                            <a href="{% url 'laptop' %}?brand=LG" class="mega-grid-item" style="font-weight: 800; color: #ea002a;">LG</a>
+                                            <a href="{% url 'laptop' %}?brand=msi" class="mega-grid-item" style="font-weight: 800; color: #cc0000;">msi</a>
+                                            <a href="{% url 'laptop' %}?brand=GIGABYTE" class="mega-grid-item" style="font-weight: 800; color: #000;">GIGABYTE</a>
+                                            <a href="{% url 'laptop' %}?brand=Surface" class="mega-grid-item" style="font-weight: 800;">Surface</a>
+                                            <a href="{% url 'laptop' %}?brand=Masstel" class="mega-grid-item" style="font-weight: 800; color: #e51b23;">Masstel</a>
+                                            <a href="{% url 'laptop' %}?brand=SAMSUNG" class="mega-grid-item" style="font-weight: 800; color: #1428a0;">SAMSUNG</a>
                                         </div>
                                         <div class="submenu-title" style="margin-top: 15px;">Phân khúc giá</div>
                                         <div class="mega-grid-2">
-                                            <a href="#" class="mega-grid-item">Dưới 10 triệu</a>
-                                            <a href="#" class="mega-grid-item">Từ 10 - 15 triệu</a>
-                                            <a href="#" class="mega-grid-item">Từ 15 - 20 triệu</a>
-                                            <a href="#" class="mega-grid-item">Từ 20 - 25 triệu</a>
-                                            <a href="#" class="mega-grid-item">Từ 25 - 30 triệu</a>
-                                            <a href="#" class="mega-grid-item">Trên 30 triệu</a>
+                                            <a href="{% url 'laptop' %}?price=duoi-10t" class="mega-grid-item">Dưới 10 triệu</a>
+                                            <a href="{% url 'laptop' %}?price=10t-15t" class="mega-grid-item">Từ 10 - 15 triệu</a>
+                                            <a href="{% url 'laptop' %}?price=15t-20t" class="mega-grid-item">Từ 15 - 20 triệu</a>
+                                            <a href="{% url 'laptop' %}?price=20t-25t" class="mega-grid-item">Từ 20 - 25 triệu</a>
+                                            <a href="{% url 'laptop' %}?price=25t-30t" class="mega-grid-item">Từ 25 - 30 triệu</a>
+                                            <a href="{% url 'laptop' %}?price=tren-30t" class="mega-grid-item">Trên 30 triệu</a>
                                         </div>
                                     </div>
                                     <div class="submenu-column" style="flex: 1;">
                                         <div class="submenu-title">Nhu cầu sử dụng</div>
                                         <div class="mega-grid-2">
-                                            <a href="#" class="mega-grid-item"><i class="fa fa-briefcase" style="color: #2196F3; margin-right: 5px;"></i> Văn phòng</a>
-                                            <a href="#" class="mega-grid-item"><i class="fa fa-gamepad" style="color: #f44336; margin-right: 5px;"></i> Gaming</a>
-                                            <a href="#" class="mega-grid-item"><i class="fa fa-leaf" style="color: #4CAF50; margin-right: 5px;"></i> Mỏng nhẹ</a>
-                                            <a href="#" class="mega-grid-item"><i class="fa fa-paint-brush" style="color: #9c27b0; margin-right: 5px;"></i> Đồ họa</a>
-                                            <a href="#" class="mega-grid-item"><i class="fa fa-graduation-cap" style="color: #ff9800; margin-right: 5px;"></i> Sinh viên</a>
-                                            <a href="#" class="mega-grid-item"><i class="fa fa-hand-pointer-o" style="color: #607d8b; margin-right: 5px;"></i> Cảm ứng</a>
-                                            <a href="#" class="mega-grid-item" style="grid-column: span 2;">💻 Laptop AI <span class="badge-hot-tag">Hot</span></a>
+                                            <a href="{% url 'laptop' %}?need=Văn phòng" class="mega-grid-item"><i class="fa fa-briefcase" style="color: #2196F3; margin-right: 5px;"></i> Văn phòng</a>
+                                            <a href="{% url 'laptop' %}?need=Gaming" class="mega-grid-item"><i class="fa fa-gamepad" style="color: #f44336; margin-right: 5px;"></i> Gaming</a>
+                                            <a href="{% url 'laptop' %}?need=Mỏng nhẹ" class="mega-grid-item"><i class="fa fa-leaf" style="color: #4CAF50; margin-right: 5px;"></i> Mỏng nhẹ</a>
+                                            <a href="{% url 'laptop' %}?need=Đồ họa" class="mega-grid-item"><i class="fa fa-paint-brush" style="color: #9c27b0; margin-right: 5px;"></i> Đồ họa</a>
+                                            <a href="{% url 'laptop' %}?need=Sinh viên" class="mega-grid-item"><i class="fa fa-graduation-cap" style="color: #ff9800; margin-right: 5px;"></i> Sinh viên</a>
+                                            <a href="{% url 'laptop' %}?need=Cảm ứng" class="mega-grid-item"><i class="fa fa-hand-pointer-o" style="color: #607d8b; margin-right: 5px;"></i> Cảm ứng</a>
+                                            <a href="{% url 'laptop' %}?need=Laptop AI" class="mega-grid-item" style="grid-column: span 2;">💻 Laptop AI <span class="badge-hot-tag">Hot</span></a>
                                         </div>
                                     </div>
                                     <div class="submenu-column" style="flex: 1.2;">
                                         <div class="submenu-title">Dòng chip</div>
                                         <div class="mega-grid-2">
-                                            <a href="#" class="mega-grid-item">Core i3</a>
-                                            <a href="#" class="mega-grid-item">Core i5</a>
-                                            <a href="#" class="mega-grid-item">Core i7</a>
-                                            <a href="#" class="mega-grid-item">Core i9</a>
-                                            <a href="#" class="mega-grid-item">Intel Core Ultra</a>
-                                            <a href="#" class="mega-grid-item">Apple M-Series</a>
-                                            <a href="#" class="mega-grid-item">AMD Ryzen 5</a>
-                                            <a href="#" class="mega-grid-item">AMD Ryzen 7</a>
+                                            <a href="{% url 'laptop' %}?chip=Core i3" class="mega-grid-item">Core i3</a>
+                                            <a href="{% url 'laptop' %}?chip=Core i5" class="mega-grid-item">Core i5</a>
+                                            <a href="{% url 'laptop' %}?chip=Core i7" class="mega-grid-item">Core i7</a>
+                                            <a href="{% url 'laptop' %}?chip=Core i9" class="mega-grid-item">Core i9</a>
+                                            <a href="{% url 'laptop' %}?chip=Ultra" class="mega-grid-item">Intel Core Ultra</a>
+                                            <a href="{% url 'laptop' %}?chip=M-Series" class="mega-grid-item">Apple M-Series</a>
+                                            <a href="{% url 'laptop' %}?chip=Ryzen 5" class="mega-grid-item">AMD Ryzen 5</a>
+                                            <a href="{% url 'laptop' %}?chip=Ryzen 7" class="mega-grid-item">AMD Ryzen 7</a>
                                         </div>
                                         <div class="submenu-title" style="margin-top: 15px;">Kích thước màn hình</div>
                                         <div class="mega-grid-2">
-                                            <a href="#" class="mega-grid-item">13 inch</a>
-                                            <a href="#" class="mega-grid-item">14 inch</a>
-                                            <a href="#" class="mega-grid-item">15.6 inch</a>
-                                            <a href="#" class="mega-grid-item">16 inch</a>
+                                            <a href="{% url 'laptop' %}?screen=13" class="mega-grid-item">13 inch</a>
+                                            <a href="{% url 'laptop' %}?screen=14" class="mega-grid-item">14 inch</a>
+                                            <a href="{% url 'laptop' %}?screen=15.6" class="mega-grid-item">15.6 inch</a>
+                                            <a href="{% url 'laptop' %}?screen=16" class="mega-grid-item">16 inch</a>
                                         </div>
                                     </div>
                                 </div>
                             </li>
 
                             <li class="has-submenu">
-                                <a href="#">
+                                <a href="{% url 'earphone' %}">
                                     <div class="menu-item-left"><i class="fa fa-headphones" style="font-size: 18px;"></i> Tai nghe</div>
                                     <i class="fa fa-angle-right"></i>
                                 </a>
@@ -981,10 +981,13 @@
                             </li>
 
                             <li class="has-submenu">
-                                <a href="#">
-                                    <div class="menu-item-left"><i class="fa fa-clock-o" style="font-size: 18px;"></i> Đồng hồ, Camera</div>
+                                <a href="javascript:void(0);">
+                                    <div class="menu-item-left"><i class="fa fa-clock-o"></i> Đồng hồ, Camera</div>
                                     <i class="fa fa-angle-right"></i>
                                 </a>
+                                <div class="submenu-panel" style="width: 900px; display: flex; gap: 20px;">
+                                    <a href="{% url 'watch' %}?need=smartwatch" class="mega-grid-item">Đồng hồ thông minh</a>
+                                </div>
                                 <div class="submenu-panel" style="width: 1000px; display: flex; gap: 20px;">
                                     <div class="submenu-column" style="flex: 1.2;">
                                         <div class="submenu-title">Loại đồng hồ</div>

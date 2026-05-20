@@ -599,3 +599,71 @@ def import_real_data(request):
             count += 1
 
     return HttpResponse(f"<h1 style='color:green; font-family:sans-serif;'>THÀNH CÔNG!</h1> <p>Đã nạp tự động <b>{count}</b> sản phẩm THẬT (kèm ảnh gốc) vào Database.</p>")
+
+def laptop(request):
+    # Lấy toàn bộ sản phẩm thuộc danh mục "Laptop"
+    laptops = Product.objects.filter(category__name__icontains='Laptop')
+    
+    # BẮT CÁC TỪ KHÓA TỪ MENU THẢ XUỐNG ĐỂ LỌC (BRAND, CHIP, NEED...)
+    brand = request.GET.get('brand')
+    if brand:
+        laptops = laptops.filter(name__icontains=brand)
+        
+    chip = request.GET.get('chip')
+    if chip:
+        laptops = laptops.filter(specifications__icontains=chip)
+        
+    need = request.GET.get('need')
+    if need:
+        # Tìm trong mô tả ngắn hoặc tên xem có chữ Văn phòng, Gaming... không
+        laptops = laptops.filter(short_description__icontains=need) 
+
+    # --- (Phần xử lý giỏ hàng mặc định của em - Nếu em đang dùng hàm logic giỏ hàng nào thì copy xuống đây nhé, thầy ví dụ cấu trúc cơ bản) ---
+    cartItems = 0
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        cartItems = order.get_cart_items
+    # -------------------------------------------------------------------------
+
+    context = {
+        'laptops': laptops,
+        'cartItems': cartItems,
+    }
+    return render(request, 'home/laptop.html', context)
+
+def earphone(request):
+    # Lấy sản phẩm có tên hoặc mô tả chứa "Tai nghe"
+    earphones = Product.objects.filter(name__icontains='Tai nghe') 
+    
+    # Lọc thương hiệu (Brand)
+    brand = request.GET.get('brand')
+    if brand: earphones = earphones.filter(name__icontains=brand)
+    
+    # Lọc nhu cầu (Need)
+    need = request.GET.get('need')
+    if need: earphones = earphones.filter(short_description__icontains=need)
+    
+    cartItems = 0
+    if request.user.is_authenticated:
+        order = Order.objects.filter(customer=request.user, complete=False).first()
+        cartItems = order.get_cart_items if order else 0
+        
+    context = {'earphones': earphones, 'cartItems': cartItems}
+    return render(request, 'home/earphone.html', context)
+
+def watch(request):
+    watches = Product.objects.filter(category__name__icontains='Đồng hồ')
+    cartItems = 0
+    if request.user.is_authenticated:
+        order = Order.objects.filter(customer=request.user, complete=False).first()
+        cartItems = order.get_cart_items if order else 0
+    return render(request, 'home/watch.html', {'watches': watches, 'cartItems': cartItems})
+
+def camera(request):
+    cameras = Product.objects.filter(category__name__icontains='Camera')
+    cartItems = 0
+    if request.user.is_authenticated:
+        order = Order.objects.filter(customer=request.user, complete=False).first()
+        cartItems = order.get_cart_items if order else 0
+    return render(request, 'home/camera.html', {'cameras': cameras, 'cartItems': cartItems})

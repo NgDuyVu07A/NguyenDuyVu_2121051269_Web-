@@ -25,6 +25,9 @@ urlpatterns = [
     path('khuyen-mai-hot/', views.hot_promotions, name='hot_promotions'),
     path('dien-thoai/', views.phone, name='phone'),
     path('may-tinh-bang/', views.tablet, name='tablet'),
-    path('import-real/', views.import_real_data, name='import_real'),
+    path('laptop/', views.laptop, name='laptop'),
+    path('tai-nghe/', views.earphone, name='earphone'),
+    path('dong-ho/', views.watch, name='watch'),
+    path('camera/', views.camera, name='camera'),
 ]
 
