@@ -1,0 +1,100 @@
+{% extends "admin/base_site.html" %}
+{% load humanize %}
+
+{% block content %}
+<div id="content-main">
+    <div style="background: #f4f6f9; padding: 25px; border-radius: 12px; min-height: 80vh;">
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px;">
+            <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid #28a745;">
+                <p style="margin: 0; color: #888; font-size: 14px; text-transform: uppercase; font-weight: bold;">TỔNG DOANH THU</p>
+                <h3 style="margin: 10px 0 0 0; color: #333; font-size: 26px;">{{ total_revenue|intcomma }} đ</h3>
+            </div>
+
+            <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid #17a2b8;">
+                <p style="margin: 0; color: #888; font-size: 14px; text-transform: uppercase; font-weight: bold;">SỐ ĐƠN THÀNH CÔNG</p>
+                <h3 style="margin: 10px 0 0 0; color: #333; font-size: 26px;">{{ total_orders }} <span style="font-size: 14px; color: #999;">Đơn</span></h3>
+            </div>
+
+            <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid #6f42c1;">
+                <p style="margin: 0; color: #888; font-size: 14px; text-transform: uppercase; font-weight: bold;">KHÁCH ĐÃ ĐĂNG KÝ</p>
+                <h3 style="margin: 10px 0 0 0; color: #333; font-size: 26px;">{{ total_customers }} <span style="font-size: 14px; color: #999;">Người</span></h3>
+            </div>
+
+            <div style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-bottom: 4px solid #ffc107;">
+                <p style="margin: 0; color: #888; font-size: 14px; text-transform: uppercase; font-weight: bold;">ĐIỂM ĐÁNH GIÁ SHOP</p>
+                <h3 style="margin: 10px 0 0 0; color: #333; font-size: 26px;">{{ avg_rating }} <span style="color: #ffc107; font-size: 20px;">★</span></h3>
+            </div>
+        </div>
+
+        <div style="background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h3 style="margin-top: 0; color: #333; margin-bottom: 20px; font-family: Arial, sans-serif;">Biểu đồ Doanh thu theo Ngày</h3>
+            <div style="width: 100%; height: 450px;">
+                <canvas id="revenueBarChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('revenueBarChart').getContext('2d');
+
+        // Parse dữ liệu từ views truyền sang
+        const rawDates = "{{ chart_dates|safe }}";
+        const rawRevenues = "{{ chart_revenues|safe }}";
+
+        let labels = [];
+        let data = [];
+
+        try {
+            // Thay thế dấu ' thành " để JSON.parse đọc được chuẩn list của Python
+            if (rawDates) labels = JSON.parse(rawDates.replace(/'/g, '"'));
+            if (rawRevenues) data = JSON.parse(rawRevenues);
+        } catch (e) {
+            console.error("Lỗi dữ liệu biểu đồ: ", e);
+        }
+
+        new Chart(ctx, {
+            type: 'bar', // BIỂU ĐỒ CỘT
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: data,
+                    backgroundColor: 'rgba(209, 0, 36, 0.8)', // Màu đỏ Electro
+                    borderColor: 'rgba(209, 0, 36, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) {
+                                return value.toLocaleString('vi-VN') + ' đ';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return 'Doanh thu: ' + context.parsed.y.toLocaleString('vi-VN') + ' đ';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

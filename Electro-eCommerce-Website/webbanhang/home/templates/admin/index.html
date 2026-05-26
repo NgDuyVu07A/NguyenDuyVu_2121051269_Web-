@@ -1,0 +1,10 @@
+{% extends "admin/index.html" %}
+
+{% block sidebar %}
+    <div style="margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <a href="{% url 'admin:shop_statistics' %}" style="display: block; text-align: center; background: #D10024; color: white; padding: 10px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 14px;">
+            📊 XEM BÁO CÁO THỐNG KÊ
+        </a>
+    </div>
+    {{ block.super }}
+{% endblock %}

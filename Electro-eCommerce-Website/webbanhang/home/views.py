@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
-# CHÚ Ý: Đã bổ sung Category vào đây
 from .models import Product, Order, OrderItem, News, Wishlist, UserProfile, Category
 from .forms import RegistrationForm
 from django.db.models import F, FloatField, ExpressionWrapper, Sum, Q
@@ -20,7 +19,7 @@ def index(request):
     tablets = Product.objects.filter(category__name__icontains='bảng')
     laptops = Product.objects.filter(category__name__icontains='laptop')
     accessories = Product.objects.filter(category__name__icontains='phụ kiện')
-    watches = Product.objects.filter(category__name__icontains='đồng hồ')
+    watches = Product.objects.filter(category__name__icontains='Đồng hồ')
     earphones = Product.objects.filter(category__name__icontains='tai nghe')
     
     search_query = request.GET.get('q')
@@ -70,29 +69,36 @@ def index(request):
 
 # 2. TRANG KHUYẾN MÃI HOT
 def hot_promotions(request):
-    discounted_products = Product.objects.filter(old_price__gt=F('price')).annotate(
-        discount_percent=ExpressionWrapper(
-            (F('old_price') - F('price')) * 100.0 / F('old_price'),
-            output_field=FloatField()
-        )
-    ).order_by('-discount_percent')
+    # Lấy tất cả sản phẩm đang có giảm giá (Ví dụ: discount > 0 hoặc old_price > 0)
+    hot_products = Product.objects.filter(discount__gt=0).order_by('-discount')
 
-    phones = discounted_products.filter(category__name__icontains='thoại')
-    tablets = discounted_products.filter(category__name__icontains='bảng')
-    
+    # Phân loại theo danh mục để truyền ra các Tab
+    phones = hot_products.filter(category__name__icontains='Điện thoại')
+    tablets = hot_products.filter(category__name__icontains='Máy tính bảng')
+    laptops = hot_products.filter(category__name__icontains='Laptop')
+    watches = hot_products.filter(category__name__icontains='Đồng hồ')
+    cameras = hot_products.filter(Q(category__name__icontains='Camera') | Q(category__name__icontains='Máy ảnh'))
+    earphones = hot_products.filter(category__name__icontains='Tai nghe')
+    accessories = hot_products.filter(category__name__icontains='Phụ kiện')
+
+    # Xử lý giỏ hàng & Wishlist
     cartItems = 0
     wishlist_product_ids = []
-    
     if request.user.is_authenticated:
         order, created = Order.objects.get_or_create(customer=request.user, complete=False)
         cartItems = order.get_cart_items
         wishlist_product_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
-        
+
     context = {
         'phones': phones,
         'tablets': tablets,
+        'laptops': laptops,
+        'watches': watches,
+        'cameras': cameras,
+        'earphones': earphones,
+        'accessories': accessories,
         'cartItems': cartItems,
-        'wishlist_product_ids': wishlist_product_ids,
+        'wishlist_product_ids': wishlist_product_ids
     }
     return render(request, 'home/hot_promotions.html', context)
 
@@ -601,69 +607,353 @@ def import_real_data(request):
     return HttpResponse(f"<h1 style='color:green; font-family:sans-serif;'>THÀNH CÔNG!</h1> <p>Đã nạp tự động <b>{count}</b> sản phẩm THẬT (kèm ảnh gốc) vào Database.</p>")
 
 def laptop(request):
-    # Lấy toàn bộ sản phẩm thuộc danh mục "Laptop"
     laptops = Product.objects.filter(category__name__icontains='Laptop')
     
-    # BẮT CÁC TỪ KHÓA TỪ MENU THẢ XUỐNG ĐỂ LỌC (BRAND, CHIP, NEED...)
+    # 1. Lọc Thương hiệu
     brand = request.GET.get('brand')
     if brand:
         laptops = laptops.filter(name__icontains=brand)
-        
-    chip = request.GET.get('chip')
-    if chip:
-        laptops = laptops.filter(specifications__icontains=chip)
-        
+
+    # 2. Lọc Nhu cầu
     need = request.GET.get('need')
     if need:
-        # Tìm trong mô tả ngắn hoặc tên xem có chữ Văn phòng, Gaming... không
-        laptops = laptops.filter(short_description__icontains=need) 
+        laptops = laptops.filter(Q(short_description__icontains=need) | Q(name__icontains=need) | Q(specifications__icontains=need))
 
-    # --- (Phần xử lý giỏ hàng mặc định của em - Nếu em đang dùng hàm logic giỏ hàng nào thì copy xuống đây nhé, thầy ví dụ cấu trúc cơ bản) ---
+    # 3. Lọc Giá
+    price = request.GET.get('price')
+    if price == 'duoi-10t': laptops = laptops.filter(price__lt=10000000)
+    elif price == '10t-15t': laptops = laptops.filter(price__gte=10000000, price__lt=15000000)
+    elif price == '15t-20t': laptops = laptops.filter(price__gte=15000000, price__lt=20000000)
+    elif price == '20t-25t': laptops = laptops.filter(price__gte=20000000, price__lt=25000000)
+    elif price == '25t-30t': laptops = laptops.filter(price__gte=25000000, price__lt=30000000)
+    elif price == 'tren-30t': laptops = laptops.filter(price__gte=30000000)
+
+    # 4. Lọc CPU
+    cpu = request.GET.get('cpu')
+    if cpu:
+        laptops = laptops.filter(specifications__icontains=cpu)
+
+    # 5. Lọc RAM
+    ram = request.GET.get('ram')
+    if ram:
+        laptops = laptops.filter(Q(specifications__icontains=f'{ram}') | Q(name__icontains=f'{ram}'))
+
+    # 6. Lọc Ổ cứng (ROM)
+    rom = request.GET.get('rom')
+    if rom:
+        laptops = laptops.filter(Q(specifications__icontains=f'{rom}') | Q(name__icontains=f'{rom}'))
+
+    # 7. Lọc Card đồ họa (VGA)
+    vga = request.GET.get('vga')
+    if vga == 'Onboard':
+        laptops = laptops.filter(Q(specifications__icontains='Onboard') | Q(specifications__icontains='Integrated') | Q(specifications__icontains='Intel Iris') | Q(specifications__icontains='Intel UHD') | Q(specifications__icontains='AMD Radeon Graphics'))
+    elif vga:
+        laptops = laptops.filter(specifications__icontains=vga)
+
+    # 8. Sắp xếp
+    sort = request.GET.get('sort')
+    if sort == 'price_asc': laptops = laptops.order_by('price')
+    elif sort == 'price_desc': laptops = laptops.order_by('-price')
+    elif sort == 'hot': laptops = laptops.order_by('-discount')
+    elif sort == 'pop': laptops = laptops.order_by('-id')
+
+    # Xử lý giỏ hàng & Wishlist
     cartItems = 0
+    wishlist_product_ids = []
     if request.user.is_authenticated:
-        customer = request.user
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        order, created = Order.objects.get_or_create(customer=request.user, complete=False)
         cartItems = order.get_cart_items
-    # -------------------------------------------------------------------------
+        wishlist_product_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
 
     context = {
         'laptops': laptops,
         'cartItems': cartItems,
+        'wishlist_product_ids': wishlist_product_ids
     }
     return render(request, 'home/laptop.html', context)
 
 def earphone(request):
-    # Lấy sản phẩm có tên hoặc mô tả chứa "Tai nghe"
-    earphones = Product.objects.filter(name__icontains='Tai nghe') 
+    # ĐẢM BẢO TÊN DANH MỤC TRONG DATABASE CÓ CHỮ "Tai nghe"
+    earphones = Product.objects.filter(category__name__icontains='Tai nghe')
     
-    # Lọc thương hiệu (Brand)
+    # 1. Lọc Thương hiệu
     brand = request.GET.get('brand')
-    if brand: earphones = earphones.filter(name__icontains=brand)
-    
-    # Lọc nhu cầu (Need)
+    if brand:
+        earphones = earphones.filter(name__icontains=brand)
+
+    # 2. Lọc Loại tai nghe (Nhu cầu)
     need = request.GET.get('need')
-    if need: earphones = earphones.filter(short_description__icontains=need)
-    
+    if need:
+        # Map các từ khóa trên UI với từ khóa trong Database
+        if need == 'bluetooth': earphones = earphones.filter(Q(specifications__icontains='Bluetooth') | Q(name__icontains='Bluetooth'))
+        elif need == 'co-day': earphones = earphones.filter(Q(specifications__icontains='Có dây') | Q(specifications__icontains='3.5mm'))
+        elif need == 'chup-tai': earphones = earphones.filter(Q(specifications__icontains='Chụp tai') | Q(specifications__icontains='Over-ear') | Q(name__icontains='Chụp tai'))
+        elif need == 'nhet-tai': earphones = earphones.filter(Q(specifications__icontains='Nhét tai') | Q(specifications__icontains='In-ear'))
+        elif need == 'gaming': earphones = earphones.filter(Q(specifications__icontains='Gaming') | Q(name__icontains='Gaming'))
+        elif need == 'the-thao': earphones = earphones.filter(Q(specifications__icontains='Thể thao') | Q(specifications__icontains='Sport'))
+
+    # 3. Lọc Giá bán
+    price = request.GET.get('price')
+    if price == 'duoi-500k': earphones = earphones.filter(price__lt=500000)
+    elif price == '500k-1t': earphones = earphones.filter(price__gte=500000, price__lt=1000000)
+    elif price == '1t-2t': earphones = earphones.filter(price__gte=1000000, price__lt=2000000)
+    elif price == '2t-5t': earphones = earphones.filter(price__gte=2000000, price__lt=5000000)
+    elif price == 'tren-5t': earphones = earphones.filter(price__gte=5000000)
+
+    # 4. Lọc Tính năng (ANC, Chống nước, Mic)
+    feature = request.GET.get('feature')
+    if feature == 'anc': earphones = earphones.filter(Q(specifications__icontains='ANC') | Q(specifications__icontains='Chống ồn'))
+    elif feature == 'waterproof': earphones = earphones.filter(Q(specifications__icontains='IPX') | Q(specifications__icontains='Chống nước'))
+    elif feature == 'mic': earphones = earphones.filter(specifications__icontains='Mic')
+
+    # 5. Sắp xếp
+    sort = request.GET.get('sort')
+    if sort == 'price_asc': earphones = earphones.order_by('price')
+    elif sort == 'price_desc': earphones = earphones.order_by('-price')
+    elif sort == 'hot': earphones = earphones.order_by('-discount')
+    elif sort == 'pop': earphones = earphones.order_by('-id')
+
+    # Xử lý Giỏ hàng và Wishlist
     cartItems = 0
+    wishlist_product_ids = []
     if request.user.is_authenticated:
-        order = Order.objects.filter(customer=request.user, complete=False).first()
-        cartItems = order.get_cart_items if order else 0
-        
-    context = {'earphones': earphones, 'cartItems': cartItems}
+        order, created = Order.objects.get_or_create(customer=request.user, complete=False)
+        cartItems = order.get_cart_items
+        wishlist_product_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+
+    context = {
+        'earphones': earphones,
+        'cartItems': cartItems,
+        'wishlist_product_ids': wishlist_product_ids
+    }
     return render(request, 'home/earphone.html', context)
 
 def watch(request):
+    # Lấy toàn bộ sản phẩm thuộc danh mục có tên chứa "Đồng hồ" hoặc "Đồng hồ thông minh"
     watches = Product.objects.filter(category__name__icontains='Đồng hồ')
+    
+    # 1. Lọc Thương hiệu (Brand)
+    brand = request.GET.get('brand')
+    if brand:
+        if brand.lower() == 'apple' or brand.lower() == 'watch':
+            watches = watches.filter(Q(name__icontains='Apple') | Q(name__icontains='Watch'))
+        else:
+            watches = watches.filter(name__icontains=brand)
+
+    # 2. Lọc Loại đồng hồ (Need/Type)
+    need = request.GET.get('need')
+    if need:
+        if need == 'smartwatch': watches = watches.filter(Q(specifications__icontains='Smartwatch') | Q(name__icontains='thông minh'))
+        elif need == 'smartband': watches = watches.filter(Q(specifications__icontains='Vòng đeo tay') | Q(name__icontains='Vòng đeo tay') | Q(name__icontains='Band'))
+        elif need == 'kids': watches = watches.filter(Q(specifications__icontains='Trẻ em') | Q(name__icontains='Trẻ em') | Q(name__icontains='Kids'))
+        elif need == 'strap': watches = watches.filter(Q(name__icontains='Dây') | Q(category__name__icontains='Dây'))
+        elif need == 'sport': watches = watches.filter(Q(specifications__icontains='Thể thao') | Q(name__icontains='Sport') | Q(name__icontains='Garmin') | Q(name__icontains='Coros'))
+        elif need == 'call': watches = watches.filter(Q(specifications__icontains='Nghe gọi') | Q(specifications__icontains='Mic'))
+        elif need == 'health': watches = watches.filter(Q(specifications__icontains='Huyết áp') | Q(specifications__icontains='Nhịp tim') | Q(specifications__icontains='SPO2'))
+
+    # 3. Lọc Giá bán (Price)
+    price = request.GET.get('price')
+    if price == 'duoi-1t': watches = watches.filter(price__lt=1000000)
+    elif price == '1t-2t': watches = watches.filter(price__gte=1000000, price__lt=2000000)
+    elif price == '2t-5t': watches = watches.filter(price__gte=2000000, price__lt=5000000)
+    elif price == '5t-10t': watches = watches.filter(price__gte=5000000, price__lt=10000000)
+    elif price == 'tren-10t': watches = watches.filter(price__gte=10000000)
+
+    # 4. Lọc Tính năng (Feature/Special)
+    special = request.GET.get('special')
+    if special == 'waterproof': watches = watches.filter(Q(specifications__icontains='IP') | Q(specifications__icontains='Chống nước') | Q(specifications__icontains='ATM'))
+    elif special == 'esim': watches = watches.filter(Q(specifications__icontains='eSIM') | Q(name__icontains='LTE'))
+    elif special == 'gps': watches = watches.filter(specifications__icontains='GPS')
+
+    # 5. Sắp xếp (Sort)
+    sort = request.GET.get('sort')
+    if sort == 'price_asc': watches = watches.order_by('price')
+    elif sort == 'price_desc': watches = watches.order_by('-price')
+    elif sort == 'hot': watches = watches.order_by('-discount') # Sắp xếp theo % giảm giá
+    elif sort == 'pop': watches = watches.order_by('-id') # Hoặc tiêu chí phổ biến khác của em
+
+    # Xử lý Giỏ hàng và Wishlist (Giữ nguyên logic của em)
     cartItems = 0
+    wishlist_product_ids = []
     if request.user.is_authenticated:
-        order = Order.objects.filter(customer=request.user, complete=False).first()
-        cartItems = order.get_cart_items if order else 0
-    return render(request, 'home/watch.html', {'watches': watches, 'cartItems': cartItems})
+        order, created = Order.objects.get_or_create(customer=request.user, complete=False)
+        cartItems = order.get_cart_items
+        wishlist_product_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+
+    context = {
+        'watches': watches,
+        'cartItems': cartItems,
+        'wishlist_product_ids': wishlist_product_ids
+    }
+    return render(request, 'home/watch.html', context)
+
 
 def camera(request):
-    cameras = Product.objects.filter(category__name__icontains='Camera')
+    # Lấy sản phẩm có danh mục chứa chữ Camera hoặc Máy ảnh
+    cameras = Product.objects.filter(Q(category__name__icontains='Camera') | Q(category__name__icontains='Máy ảnh'))
+    
+    # 1. Lọc Thương hiệu
+    brand = request.GET.get('brand')
+    if brand:
+        cameras = cameras.filter(name__icontains=brand)
+
+    # 2. Lọc Loại Camera
+    need = request.GET.get('need')
+    if need:
+        if need == 'security': cameras = cameras.filter(Q(specifications__icontains='an ninh') | Q(name__icontains='an ninh') | Q(name__icontains='Ezviz') | Q(name__icontains='Imou'))
+        elif need == 'action': cameras = cameras.filter(Q(specifications__icontains='action') | Q(name__icontains='Action') | Q(name__icontains='GoPro'))
+        elif need == 'dashcam': cameras = cameras.filter(Q(specifications__icontains='hành trình') | Q(name__icontains='hành trình'))
+        elif need == 'digital': cameras = cameras.filter(Q(specifications__icontains='kỹ thuật số') | Q(name__icontains='Máy ảnh'))
+        elif need == 'gimbal': cameras = cameras.filter(Q(specifications__icontains='gimbal') | Q(name__icontains='Gimbal') | Q(name__icontains='Chống rung'))
+        elif need == 'flycam': cameras = cameras.filter(Q(specifications__icontains='flycam') | Q(name__icontains='Flycam') | Q(name__icontains='Drone'))
+
+    # 3. Lọc Giá bán
+    price = request.GET.get('price')
+    if price == 'duoi-1t': cameras = cameras.filter(price__lt=1000000)
+    elif price == '1t-2t': cameras = cameras.filter(price__gte=1000000, price__lt=2000000)
+    elif price == '2t-5t': cameras = cameras.filter(price__gte=2000000, price__lt=5000000)
+    elif price == '5t-10t': cameras = cameras.filter(price__gte=5000000, price__lt=10000000)
+    elif price == '10t-20t': cameras = cameras.filter(price__gte=10000000, price__lt=20000000)
+    elif price == 'tren-20t': cameras = cameras.filter(price__gte=20000000)
+
+    # 4. Lọc Độ phân giải
+    resolution = request.GET.get('resolution')
+    if resolution:
+        cameras = cameras.filter(specifications__icontains=resolution)
+
+    # 5. Lọc Tính năng
+    feature = request.GET.get('feature')
+    if feature == 'waterproof': cameras = cameras.filter(Q(specifications__icontains='Chống nước') | Q(specifications__icontains='IP'))
+    elif feature == 'stabilization': cameras = cameras.filter(Q(specifications__icontains='Chống rung') | Q(specifications__icontains='OIS') | Q(specifications__icontains='RockSteady'))
+    elif feature == 'night_vision': cameras = cameras.filter(Q(specifications__icontains='Hồng ngoại') | Q(specifications__icontains='Quay đêm'))
+    elif feature == 'ai_tracking': cameras = cameras.filter(Q(specifications__icontains='AI') | Q(specifications__icontains='Theo dõi chuyển động'))
+
+    # 6. Sắp xếp
+    sort = request.GET.get('sort')
+    if sort == 'price_asc': cameras = cameras.order_by('price')
+    elif sort == 'price_desc': cameras = cameras.order_by('-price')
+    elif sort == 'hot': cameras = cameras.order_by('-discount')
+    elif sort == 'pop': cameras = cameras.order_by('-id')
+
+    # Xử lý giỏ hàng
     cartItems = 0
+    wishlist_product_ids = []
     if request.user.is_authenticated:
-        order = Order.objects.filter(customer=request.user, complete=False).first()
-        cartItems = order.get_cart_items if order else 0
-    return render(request, 'home/camera.html', {'cameras': cameras, 'cartItems': cartItems})
+        order, created = Order.objects.get_or_create(customer=request.user, complete=False)
+        cartItems = order.get_cart_items
+        wishlist_product_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+
+    context = {
+        'cameras': cameras, # Chú ý: Biến truyền ra là 'cameras'
+        'cartItems': cartItems,
+        'wishlist_product_ids': wishlist_product_ids
+    }
+    return render(request, 'home/camera.html', context)
+
+def accessory(request):
+    # Lấy sản phẩm có danh mục chứa chữ "Phụ kiện" (Em nhớ check lại tên danh mục trong DB nhé)
+    accessories = Product.objects.filter(category__name__icontains='Phụ kiện')
+    
+    # 1. Lọc Thương hiệu
+    brand = request.GET.get('brand')
+    if brand:
+        accessories = accessories.filter(name__icontains=brand)
+
+    # 2. Lọc Loại phụ kiện (Nhu cầu)
+    need = request.GET.get('need')
+    if need:
+        if need == 'powerbank': accessories = accessories.filter(Q(specifications__icontains='Pin') | Q(name__icontains='Sạc dự phòng'))
+        elif need == 'charger': accessories = accessories.filter(Q(specifications__icontains='Sạc') | Q(name__icontains='Cáp') | Q(name__icontains='Sạc'))
+        elif need == 'case': accessories = accessories.filter(Q(specifications__icontains='Ốp') | Q(name__icontains='Ốp') | Q(name__icontains='Bao da'))
+        elif need == 'screen_protector': accessories = accessories.filter(Q(specifications__icontains='Dán') | Q(name__icontains='Dán màn hình') | Q(name__icontains='Kính cường lực'))
+        elif need == 'mouse_keyboard': accessories = accessories.filter(Q(name__icontains='Chuột') | Q(name__icontains='Bàn phím') | Q(name__icontains='Mouse') | Q(name__icontains='Keyboard'))
+        elif need == 'hub': accessories = accessories.filter(Q(name__icontains='Hub') | Q(name__icontains='Cổng chuyển'))
+        elif need == 'network': accessories = accessories.filter(Q(category__name__icontains='Mạng') | Q(name__icontains='Router') | Q(name__icontains='Wifi'))
+        elif need == 'smarthome': accessories = accessories.filter(Q(category__name__icontains='Smarthome') | Q(name__icontains='Thông minh'))
+        elif need == 'apple_acc': accessories = accessories.filter(Q(name__icontains='Apple') | Q(name__icontains='AirTag') | Q(name__icontains='Pencil') | Q(name__icontains='MagSafe'))
+
+    # 3. Lọc Giá bán (Thang giá của phụ kiện thường thấp hơn)
+    price = request.GET.get('price')
+    if price == 'duoi-100k': accessories = accessories.filter(price__lt=100000)
+    elif price == '100k-300k': accessories = accessories.filter(price__gte=100000, price__lt=300000)
+    elif price == '300k-500k': accessories = accessories.filter(price__gte=300000, price__lt=500000)
+    elif price == '500k-1t': accessories = accessories.filter(price__gte=500000, price__lt=1000000)
+    elif price == '1t-2t': accessories = accessories.filter(price__gte=1000000, price__lt=2000000)
+    elif price == 'tren-2t': accessories = accessories.filter(price__gte=2000000)
+
+    # 4. Sắp xếp
+    sort = request.GET.get('sort')
+    if sort == 'price_asc': accessories = accessories.order_by('price')
+    elif sort == 'price_desc': accessories = accessories.order_by('-price')
+    elif sort == 'hot': accessories = accessories.order_by('-discount')
+    elif sort == 'pop': accessories = accessories.order_by('-id')
+
+    # Xử lý giỏ hàng & Wishlist
+    cartItems = 0
+    wishlist_product_ids = []
+    if request.user.is_authenticated:
+        order, created = Order.objects.get_or_create(customer=request.user, complete=False)
+        cartItems = order.get_cart_items
+        wishlist_product_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+
+    context = {
+        'accessories': accessories, # Trả về biến accessories
+        'cartItems': cartItems,
+        'wishlist_product_ids': wishlist_product_ids
+    }
+    return render(request, 'home/accessory.html', context)
+
+def search_view(request):
+    query = request.GET.get('q', '')
+    products = Product.objects.all()
+
+    if query:
+        # Tìm kiếm theo tên, mô tả ngắn hoặc tên danh mục
+        products = products.filter(
+            Q(name__icontains=query) | 
+            Q(short_description__icontains=query) |
+            Q(category__name__icontains=query)
+        )
+
+    # XỬ LÝ SẮP XẾP CHO TRANG TÌM KIẾM
+    sort = request.GET.get('sort')
+    if sort == 'price_asc':
+        products = products.order_by('price')
+    elif sort == 'price_desc':
+        products = products.order_by('-price')
+    else:
+        # Mặc định (Liên quan / Mới nhất)
+        products = products.order_by('-id')
+
+    # Xử lý giỏ hàng và Yêu thích
+    cartItems = 0
+    wishlist_product_ids = []
+    if request.user.is_authenticated:
+        order, created = Order.objects.get_or_create(customer=request.user, complete=False)
+        cartItems = order.get_cart_items
+        wishlist_product_ids = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+
+    context = {
+        'products': products,
+        'query': query,
+        'cartItems': cartItems,
+        'wishlist_product_ids': wishlist_product_ids
+    }
+    
+    return render(request, 'home/search.html', context)
+
+@login_required(login_url='login')
+def confirm_receipt(request, order_id):
+    # Lấy đúng đơn hàng của user đang đăng nhập
+    order = get_object_or_404(Order, id=order_id, customer=request.user)
+    
+    # Chỉ cho phép xác nhận nếu đơn hàng đang ở trạng thái "Đang giao hàng"
+    if order.status == 'Shipping':
+        order.status = 'Completed'
+        order.save()
+        messages.success(request, 'Cảm ơn bạn! Đơn hàng đã được xác nhận giao thành công.')
+    else:
+        messages.error(request, 'Lỗi: Đơn hàng này không ở trạng thái chờ nhận hàng.')
+        
+    # Quay lại trang lịch sử mua hàng (ví dụ em đặt tên là trang profile)
+    return redirect('profile')

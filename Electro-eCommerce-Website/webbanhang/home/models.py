@@ -53,10 +53,20 @@ class Product(models.Model):
 
 # 3. Đơn hàng (Cái giỏ) - PHẢI VIẾT SÁT LỀ TRÁI
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('Pending', 'Chờ xác nhận'),
+        ('Shipping', 'Đang giao hàng'),
+        ('Completed', 'Hoàn thành (Đã nhận)'),
+        ('Cancelled', 'Đã hủy'),
+    )
+
     customer = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=False) 
     transaction_id = models.CharField(max_length=200, null=True)
+    
+    # TRƯỜNG TRẠNG THÁI ĐƠN HÀNG (MẶC ĐỊNH LÀ CHỜ XÁC NHẬN)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
 
     def __str__(self):
         return str(self.id)  
@@ -73,7 +83,6 @@ class Order(models.Model):
         total = sum([item.quantity for item in orderitems])
         return total
         
-    # --- Đổi tên hiển thị trong trang Admin ---
     class Meta:
         verbose_name = 'Đơn hàng'
         verbose_name_plural = 'Đơn hàng'
@@ -204,3 +213,9 @@ class ProductColor(models.Model):
     @property
     def get_rating_stars(self):
         return round(self.get_avg_rating)
+    
+class RevenueReport(Order):
+    class Meta:
+        proxy = True # Thủ thuật tạo menu ảo không sinh thêm bảng trong Database
+        verbose_name = 'Báo cáo doanh thu'
+        verbose_name_plural = 'Báo cáo doanh thu'

@@ -1,65 +1,117 @@
 from django.contrib import admin
-from .models import Category, Product, Order, OrderItem, ProductImage, Review, ProductColor
-from .models import News
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.admin import UserAdmin, GroupAdmin
+from .models import Category, Product, Order, OrderItem, ProductImage, Review, ProductColor, News, RevenueReport
+from django.db.models import Sum, Count, Avg
+from django.db.models.functions import TruncDate
+from django.template.response import TemplateResponse
 
-# --- ĐỔI TÊN TIÊU ĐỀ TRANG ADMIN TẠI ĐÂY ---
+# Cấu hình Header
 admin.site.site_header = "Hệ thống quản trị Electro"
 admin.site.site_title = "Quản trị Electro"
 admin.site.index_title = "Bảng điều khiển Electro"
 
+# Đăng ký User/Group
+admin.site.unregister(User) # Bỏ đăng ký mặc định
+admin.site.unregister(Group) # Bỏ đăng ký mặc định
+admin.site.register(User, UserAdmin)
+admin.site.register(Group, GroupAdmin)
+
+# Các Inlines
+class ProductColorInline(admin.TabularInline):
+    model = ProductColor
+    extra = 0 
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 4 
+
+class ReviewInline(admin.TabularInline):
+    model = Review
+    extra = 0 
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+    readonly_fields = ('product', 'quantity', 'get_total')
+    can_delete = False
+
+# Các Admins
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
     list_display = ('title', 'date_added')
 
-# --- TẠO KHUNG (INLINE) ĐỂ NHÚNG VÀO TRANG SẢN PHẨM ---
-class ProductColorInline(admin.TabularInline):
-    model = ProductColor
-    extra = 0 # Mặc định không hiện ô trống, khi nào cần thêm màu thì bấm nút Add
-
-class ProductImageInline(admin.TabularInline):
-    model = ProductImage
-    extra = 4 # Hiển thị sẵn 4 ô trống để up ảnh phụ
-
-class ReviewInline(admin.TabularInline):
-    model = Review
-    extra = 0 # Mặc định không hiện sẵn ô review trống nào (khi nào cần thêm thì bấm nút "Add another")
-
-# 1. Cấu hình hiển thị cho Sản phẩm
+@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    # NHÚNG 3 KHUNG VỪA TẠO VÀO DƯỚI CÙNG TRANG SỬA SẢN PHẨM
     inlines = [ProductColorInline, ProductImageInline, ReviewInline]
-    
-    # Các cột hiển thị ở danh sách ngoài trang Admin
     list_display = ('name', 'price', 'is_available', 'category', 'date_added')
-
     list_editable = ('is_available',)
     
-    # Cho phép tìm kiếm nhanh theo tên
+    # --- THÊM: Ô gõ tìm kiếm theo tên sản phẩm ---
     search_fields = ('name',)
     
-    # Bộ lọc nhanh bên phải trang
-    list_filter = ('category',)
+    # --- THÊM: Menu lọc theo danh mục và trạng thái ở cột bên phải ---
+    list_filter = ('category', 'is_available')
 
-    # Định dạng hiển thị giá bán hiện tại: 10.000.000đ
-    def get_price(self, obj):
-        return "{:,.0f}đ".format(obj.price).replace(',', '.')
-    get_price.short_description = 'Giá bán hiện tại'
-
-    # Định dạng hiển thị giá gốc: 12.000.000đ
-    def get_old_price(self, obj):
-        return "{:,.0f}đ".format(obj.old_price).replace(',', '.')
-    get_old_price.short_description = 'Giá niêm yết (Gốc)'
-
-# 2. Cấu hình hiển thị cho Đơn hàng
+@admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer', 'date_ordered', 'complete', 'transaction_id')
-    list_filter = ('complete', 'date_ordered')
+    list_display = ('id', 'customer', 'status', 'get_total_price', 'date_ordered')
+    list_filter = ('complete', 'status', 'date_ordered')
+    inlines = [OrderItemInline]
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(complete=True)
+    
+    def get_total_price(self, obj):
+        return "{:,.0f}đ".format(obj.get_cart_total).replace(',', '.')
+    
+# =======================================================
+# KHU VỰC BÁO CÁO DOANH THU (MENU RIÊNG BIỆT)
+# =======================================================
+@admin.register(RevenueReport)
+class RevenueReportAdmin(admin.ModelAdmin):
+    # Ẩn nút "Thêm mới" vì đây chỉ là trang xem báo cáo
+    def has_add_permission(self, request):
+        return False
 
-# 3. Đăng ký các Model vào hệ thống Admin
+    # Viết đè giao diện danh sách để hiển thị Dashboard biểu đồ
+    def changelist_view(self, request, extra_context=None):
+        # 1. Doanh thu & Tổng đơn (Chỉ tính đơn Completed)
+        completed_orders = Order.objects.filter(status='Completed')
+        total_orders = completed_orders.count()
+        total_revenue = sum([order.get_cart_total for order in completed_orders])
+
+        # 2. Điểm đánh giá trung bình của Shop
+        avg_rating = Review.objects.aggregate(Avg('rating'))['rating__avg'] or 0
+
+        # 3. Tổng số khách hàng (Tài khoản User thường)
+        total_customers = User.objects.filter(is_superuser=False).count()
+
+        # 4. Xử lý dữ liệu cho BIỂU ĐỒ CỘT (Doanh thu theo ngày)
+        daily_orders = completed_orders.annotate(
+            date=TruncDate('date_ordered')
+        ).values('date').order_by('date').distinct()
+
+        dates = []
+        revenues = []
+        for entry in daily_orders:
+            day_orders = completed_orders.filter(date_ordered__date=entry['date'])
+            day_sum = sum([o.get_cart_total for o in day_orders])
+            dates.append(entry['date'].strftime("%d/%m/%Y"))
+            revenues.append(day_sum)
+
+        context = dict(
+            self.admin_site.each_context(request),
+            title="Phân Tích Doanh Thu Chi Tiết",
+            total_orders=total_orders,
+            total_revenue=total_revenue,
+            avg_rating=round(avg_rating, 1),
+            total_customers=total_customers,
+            chart_dates=dates,
+            chart_revenues=revenues,
+        )
+        return TemplateResponse(request, "admin/revenue_report.html", context)
+
 admin.site.register(Category)
-admin.site.register(Product, ProductAdmin) # Sử dụng ProductAdmin để tùy biến
-admin.site.register(Order, OrderAdmin)
-admin.site.register(OrderItem)
-
-# Quản lý Review độc lập (nếu muốn xem toàn bộ review của tất cả sản phẩm)
 admin.site.register(Review)
+

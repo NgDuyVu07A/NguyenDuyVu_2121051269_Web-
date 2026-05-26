@@ -29,5 +29,8 @@ urlpatterns = [
     path('tai-nghe/', views.earphone, name='earphone'),
     path('dong-ho/', views.watch, name='watch'),
     path('camera/', views.camera, name='camera'),
+    path('phukien/', views.accessory, name='accessory'),
+    path('search/', views.search_view, name='search'),
+    path('confirm-receipt/<int:order_id>/', views.confirm_receipt, name='confirm_receipt'),
 ]
 

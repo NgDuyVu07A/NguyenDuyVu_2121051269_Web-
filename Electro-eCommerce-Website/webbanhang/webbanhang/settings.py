@@ -143,3 +143,8 @@ NUMBER_GROUPING = 3
 
 # Cho phép gửi email ra màn hình console để test
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Tắt cảnh báo lỗi thời của CKEditor 4
+SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']

@@ -61,7 +61,6 @@
             color: #fff;
         }
 
-        /* CSS CHO THANH BANNER THỐNG KÊ */
         .profile-banner {
             display: flex;
             background: #fff;
@@ -138,7 +137,6 @@
             font-weight: 500;
         }
 
-        /* CSS CHO THANH MENU NGANG (MÃ GIẢM GIÁ, LỊCH SỬ...) */
         .profile-menu-banner {
             display: flex;
             justify-content: center;
@@ -194,7 +192,6 @@
             color: #fff;
         }
 
-        /* CSS CHO MENU DỌC BÊN TRÁI */
         .profile-sidebar {
             background: #fff;
             border-radius: 10px;
@@ -241,7 +238,6 @@
             padding-top: 15px;
         }
 
-        /* CSS CHO CÁC KHỐI TỔNG QUAN */
         .overview-card {
             background: #fff;
             border-radius: 15px;
@@ -276,12 +272,11 @@
         }
 
         .status-badge {
-            background: #e8f5e9;
-            color: #2e7d32;
             padding: 4px 10px;
             border-radius: 6px;
             font-weight: 600;
             font-size: 12px;
+            display: inline-block;
         }
 
         .order-body-flex {
@@ -346,7 +341,6 @@
             text-decoration: none;
         }
 
-        /* CSS CHO SẢN PHẨM YÊU THÍCH */
         .wishlist-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -426,7 +420,6 @@
             transform: scale(1.1);
         }
 
-        /* THÔNG BÁO TOAST */
         .wishlist-toast {
             position: fixed;
             top: 20px;
@@ -465,7 +458,6 @@
             cursor: pointer;
         }
 
-        /* Ô TÌM KIẾM THEO STYLE INDEX */
         .header-search form {
             display: flex;
             position: relative;
@@ -497,7 +489,6 @@
             background-color: #a8001d !important;
         }
 
-        /* CSS TAB LỊCH SỬ MUA HÀNG */
         .order-filter-bar {
             display: flex;
             justify-content: space-between;
@@ -564,7 +555,6 @@
             font-weight: 600;
         }
 
-        /* CSS TAB THÔNG TIN TÀI KHOẢN */
         .account-card {
             background: #fff;
             border-radius: 15px;
@@ -677,11 +667,9 @@
                                 <a href="{% url 'cart' %}">
                                     <i class="fa fa-shopping-cart"></i>
                                     <span>Giỏ hàng</span>
-
                                     {% if cartItems > 0 %}
                                     <div class="qty">{{ cartItems }}</div>
                                     {% endif %}
-
                                 </a>
                             </div>
                         </div>
@@ -729,7 +717,7 @@
                         </div>
                         <div class="banner-col stat-box">
                             <h3>{{ total_orders|default:"0" }}</h3>
-                            <p>Tổng đơn hàng đã mua</p>
+                            <p>Tổng đơn hàng</p>
                         </div>
                         <div class="banner-col stat-box">
                             <h3>{{ total_spent|default:"0"|intcomma }}đ</h3>
@@ -767,7 +755,16 @@
                                         <div class="order-summary-card">
                                             <div class="order-header-flex">
                                                 <div><span style="color:#888;">Đơn hàng:</span> <strong>#DH{{ order.id }}</strong></div>
-                                                <div class="status-badge">Đã hoàn thành</div>
+
+                                                {% if order.status == 'Pending' %}
+                                                <div class="status-badge" style="background: #fff3cd; color: #f57f17;"><i class="fa fa-clock-o"></i> Chờ xác nhận</div>
+                                                {% elif order.status == 'Shipping' %}
+                                                <div class="status-badge" style="background: #e3f2fd; color: #0277bd;"><i class="fa fa-truck"></i> Đang giao hàng</div>
+                                                {% elif order.status == 'Completed' %}
+                                                <div class="status-badge" style="background: #e8f5e9; color: #2e7d32;"><i class="fa fa-check-circle"></i> Đã nhận hàng</div>
+                                                {% elif order.status == 'Cancelled' %}
+                                                <div class="status-badge" style="background: #ffebee; color: #c62828;"><i class="fa fa-times-circle"></i> Đã hủy</div>
+                                                {% endif %}
                                             </div>
                                             <div class="order-body-flex">
                                                 <div class="order-product-flex">
@@ -807,7 +804,7 @@
                                     <div class="overview-card-title">Ưu đãi của bạn</div>
                                     <div class="empty-state">
                                         <img src="https://cdn-icons-png.flaticon.com/512/7466/7466073.png" alt="No offers">
-                                        <p>Bạn chưa có ưu đãi nào. <a href="#">Xem sản phẩm</a></p>
+                                        <p>Bạn chưa có ưu đãi nào. <a href="/">Xem sản phẩm</a></p>
                                     </div>
                                 </div>
                             </div>
@@ -843,6 +840,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div id="orders" class="tab-content" style="display: none;">
                         <div class="order-filter-bar" style="margin-bottom: 15px;">
                             <h3 style="font-size: 18px; margin: 0;">Lịch sử mua hàng</h3>
@@ -855,9 +853,18 @@
                                 <div>
                                     <span style="color: #888;">Đơn hàng:</span> <strong>#DH{{ order.id }}</strong>
                                     <span style="margin: 0 10px; color: #eee;">|</span>
-                                    <span style="color: #888;">Ngày đặt:</span> <strong>{{ order.date_ordered|date:"d/m/Y" }}</strong>
+                                    <span style="color: #888;">Ngày đặt:</span> <strong>{{ order.date_ordered|date:"d/m/Y H:i" }}</strong>
                                 </div>
-                                <span class="status-success"><i class="fa fa-check-circle"></i> Đã hoàn thành</span>
+
+                                {% if order.status == 'Pending' %}
+                                <span class="status-badge" style="background: #fff3cd; color: #f57f17;"><i class="fa fa-clock-o"></i> Chờ xác nhận</span>
+                                {% elif order.status == 'Shipping' %}
+                                <span class="status-badge" style="background: #e3f2fd; color: #0277bd;"><i class="fa fa-truck"></i> Đang giao hàng</span>
+                                {% elif order.status == 'Completed' %}
+                                <span class="status-badge" style="background: #e8f5e9; color: #2e7d32;"><i class="fa fa-check-circle"></i> Đã nhận hàng</span>
+                                {% elif order.status == 'Cancelled' %}
+                                <span class="status-badge" style="background: #ffebee; color: #c62828;"><i class="fa fa-times-circle"></i> Đã hủy</span>
+                                {% endif %}
                             </div>
 
                             {% for item in order.orderitem_set.all %}
@@ -879,9 +886,18 @@
                             </div>
                             {% endfor %}
 
-                            <div class="order-history-total" style="flex-direction: row; justify-content: flex-end; align-items: center; gap: 15px; padding-top: 5px;">
-                                <span style="font-size: 14px; color: #666;">Thành tiền:</span>
-                                <strong style="font-size: 20px; color: #D10024;">{{ order.get_cart_total|intcomma }}đ</strong>
+                            <div class="order-history-total" style="flex-direction: row; justify-content: space-between; align-items: center; padding-top: 5px;">
+                                <div>
+                                    {% if order.status == 'Shipping' %}
+                                    <a href="{% url 'confirm_receipt' order.id %}" class="btn btn-success btn-sm" onclick="return confirm('Bạn xác nhận đã nhận được hàng nguyên vẹn?');" style="border-radius: 5px; font-weight: bold; background-color: #2e7d32; border:none; padding: 8px 15px;">
+                                        <i class="fa fa-check"></i> Đã nhận hàng
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <span style="font-size: 14px; color: #666;">Thành tiền:</span>
+                                    <strong style="font-size: 20px; color: #D10024;">{{ order.get_cart_total|intcomma }}đ</strong>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -892,8 +908,8 @@
                         </div>
                         {% endif %}
                     </div>
-                    <div id="account-info" class="tab-content" style="display: none;">
 
+                    <div id="account-info" class="tab-content" style="display: none;">
                         <div class="account-card">
                             <div class="account-card-header">
                                 <h3 class="account-card-title">Thông tin cá nhân</h3>
@@ -989,6 +1005,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="updateInfoModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content" style="border-radius: 12px;">
@@ -1012,7 +1029,6 @@
                             <label>Email</label>
                             <input type="email" class="form-control" name="email" value="{{ user.email }}" placeholder="Nhập email của bạn">
                         </div>
-
                         <div class="form-group">
                             <label>Số điện thoại</label>
                             <input type="text" class="form-control" name="phone" value="{{ user.userprofile.phone|default:'' }}" placeholder="Nhập số điện thoại">
@@ -1072,7 +1088,6 @@
                 <form method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="change_password">
-
                     <div class="modal-header" style="border-bottom: 1px solid #eee; padding: 15px 20px;">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title" style="font-weight: bold;">Thay đổi mật khẩu</h4>
@@ -1099,20 +1114,16 @@
         </div>
     </div>
 
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script>
-        // Chuyển Tab
-        // KHÔI PHỤC TAB TỪ BỘ NHỚ KHI TẢI LẠI TRANG
+        // JS XỬ LÝ CHUYỂN TAB VÀ YÊU THÍCH CỦA EM
         document.addEventListener("DOMContentLoaded", function () {
             const activeTab = localStorage.getItem('activeProfileTab');
             if (activeTab) {
-                // Ẩn tất cả nội dung và bỏ active
                 document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
                 document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
 
-                // Hiển thị lại Tab đang lưu
                 const targetContent = document.querySelector(activeTab);
                 const targetLink = document.querySelector(`.sidebar-link[href="${activeTab}"]`);
 
@@ -1121,16 +1132,13 @@
             }
         });
 
-        // CHUYỂN TAB VÀ LƯU VÀO BỘ NHỚ
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function (e) {
-                // Nếu bấm vào nút mở Pop-up thì không làm gì cả
                 if (this.hasAttribute('data-toggle')) return;
 
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
 
-                // Lưu lại Tab vừa bấm vào bộ nhớ trình duyệt
                 localStorage.setItem('activeProfileTab', targetId);
 
                 document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
@@ -1145,7 +1153,6 @@
             });
         });
 
-        // Xóa yêu thích
         document.querySelectorAll('.remove-btn').forEach(button => {
             button.addEventListener('click', function () {
                 const url = this.getAttribute('data-url');

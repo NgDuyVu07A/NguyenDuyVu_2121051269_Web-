@@ -1,0 +1,70 @@
+{% extends "admin/base_site.html" %}
+{% load humanize %}
+
+{% block content %}
+<div id="content-main">
+    <div style="background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px;">
+        <h2 style="margin-top: 0; font-family: Arial, sans-serif; color: #333; border-bottom: 2px solid #eee; padding-bottom: 15px;">
+            <i class="fas fa-chart-line"></i> Báo Cáo Tổng Quan Doanh Thu
+        </h2>
+        
+        <div style="display: flex; gap: 30px; margin-top: 25px;">
+            <div style="flex: 1; background: #f8fff9; padding: 25px; border-radius: 10px; border: 1px solid #c3e6cb; border-left: 6px solid #28a745;">
+                <h4 style="margin: 0 0 10px 0; color: #28a745; font-size: 15px; text-transform: uppercase; font-weight: bold;">Tổng Doanh Thu (Đã Giao)</h4>
+                <h2 style="margin: 0; color: #155724; font-size: 36px; font-weight: 900;">{{ total_revenue|intcomma }} đ</h2>
+            </div>
+
+            <div style="flex: 1; background: #f4fbff; padding: 25px; border-radius: 10px; border: 1px solid #bee5eb; border-left: 6px solid #17a2b8;">
+                <h4 style="margin: 0 0 10px 0; color: #17a2b8; font-size: 15px; text-transform: uppercase; font-weight: bold;">Tổng Số Đơn Bán Ra</h4>
+                <h2 style="margin: 0; color: #0c5460; font-size: 36px; font-weight: 900;">{{ total_orders_count }} <span style="font-size: 18px; color:#555; font-weight: normal;">đơn hàng</span></h2>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <h3 style="color: #444; margin-bottom: 20px;">Phân Bổ Trạng Thái Đơn Hàng</h3>
+            <div style="width: 100%; max-width: 500px; margin: 0 auto;">
+                <canvas id="orderStatusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('orderStatusChart').getContext('2d');
+        const rawData = "{{ status_data|safe }}"; 
+        let dataStatus = [0, 0, 0, 0]; 
+        
+        try {
+            if(rawData && rawData !== "None" && rawData !== "") {
+                dataStatus = JSON.parse(rawData);
+            }
+        } catch (e) {
+            console.error("Lỗi parse dữ liệu biểu đồ:", e);
+        }
+        
+        new Chart(ctx, {
+            type: 'doughnut', 
+            data: {
+                labels: ['Chờ xác nhận', 'Đang giao', 'Hoàn thành', 'Đã hủy'],
+                datasets: [{
+                    data: dataStatus,
+                    backgroundColor: ['#ffc107', '#17a2b8', '#28a745', '#dc3545'],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { 
+                    legend: { position: 'right', labels: { font: { size: 14 } } } 
+                },
+                cutout: '65%' // Làm vòng khuyên mỏng lại cho đẹp
+            }
+        });
+    });
+</script>
+{% endblock %}

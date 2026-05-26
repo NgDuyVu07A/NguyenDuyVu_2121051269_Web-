@@ -1,0 +1,262 @@
+{% load static %}
+
+<div class="custom-dropdown">
+    <a href="javascript:void(0);" class="btn-header-category">
+        <i class="fa fa-bars" style="color: #fff !important; font-size: 16px;"></i> <span>Danh mục</span> <i class="fa fa-angle-down" style="color: #fff !important;"></i>
+    </a>
+
+    <ul class="dropdown-menu-list">
+        <li class="has-submenu">
+            <a href="{% url 'hot_promotions' %}" class="hot-promo">
+                <div class="menu-item-left"><i class="fa fa-fire" style="font-size: 18px;"></i> Khuyến mãi Hot</div>
+                <i class="fa fa-angle-right"></i>
+            </a>
+            <div class="submenu-panel" style="width: 550px;">
+                <div class="submenu-column">
+                    <div class="submenu-title">Chương trình ưu đãi</div>
+                    <a href="{% url 'hot_promotions' %}" class="submenu-item">Hot sale cuối tuần <span class="badge-hot-tag">Hot</span></a>
+                    <a href="#" class="submenu-item">Ưu đãi thanh toán</a>
+                    <a href="#" class="submenu-item">Trả góp 3 không <span class="badge-hot-tag">Hot</span></a>
+                    <a href="#" class="submenu-item">Đặc quyền online ưu đãi 50%++</a>
+                    <a href="#" class="submenu-item">Tặng voucher 10% khi mua ĐT - Laptop</a>
+                </div>
+                <div class="submenu-column">
+                    <div style="height: 33px; margin-bottom: 12px; border-bottom: 2px solid transparent; padding-bottom: 5px;"></div>
+                    <a href="#" class="submenu-item">Iphone 16 Series trợ giá đến 3 triệu</a>
+                    <a href="#" class="submenu-item">S25 Series trợ giá đến 1 triệu</a>
+                    <a href="#" class="submenu-item">Xiaomi 15 trợ giá đến 3 triệu</a>
+                    <a href="#" class="submenu-item">Laptop trợ giá đến 4 triệu</a>
+                </div>
+            </div>
+        </li>
+
+        <li class="has-submenu">
+            <div class="menu-row-wrapper">
+                <div class="menu-item-left">
+                    <i class="fa fa-mobile" style="font-size: 18px;"></i>
+                    <div class="links-container">
+                        <a href="{% url 'phone' %}">Điện thoại</a>,
+                        <a href="{% url 'tablet' %}">Tablet</a>
+                    </div>
+                </div>
+                <i class="fa fa-angle-right" style="color: #ccc; font-size: 16px;"></i>
+            </div>
+            <div class="submenu-panel" style="width: 1000px; display: flex; gap: 20px;">
+                <div class="submenu-column" style="flex: 1.2;">
+                    <div class="submenu-title">Hãng điện thoại</div>
+                    <div class="mega-grid-3">
+                        <a href="{% url 'phone' %}?brand=iPhone" class="mega-grid-item" style="font-weight: 800; color: #000;">Apple</a>
+                        <a href="{% url 'phone' %}?brand=Samsung" class="mega-grid-item" style="font-weight: 800; color: #1428a0;">SAMSUNG</a>
+                        <a href="{% url 'phone' %}?brand=Xiaomi" class="mega-grid-item" style="font-weight: 800; color: #ff6900;">Xiaomi</a>
+                        <a href="{% url 'phone' %}?brand=OPPO" class="mega-grid-item" style="font-weight: 800; color: #046a38;">OPPO</a>
+                        <a href="{% url 'phone' %}?brand=TECNO" class="mega-grid-item" style="font-weight: 800; color: #005b9f;">TECNO</a>
+                        <a href="{% url 'phone' %}?brand=HONOR" class="mega-grid-item" style="font-weight: 800; color: #000;">HONOR</a>
+                        <a href="{% url 'phone' %}?brand=Nubia" class="mega-grid-item" style="font-weight: 800; color: #e51b23;">Nubia</a>
+                        <a href="{% url 'phone' %}?brand=SONY" class="mega-grid-item" style="font-weight: 800; color: #000;">SONY</a>
+                        <a href="{% url 'phone' %}?brand=NOKIA" class="mega-grid-item" style="font-weight: 800; color: #124191;">NOKIA</a>
+                        <a href="{% url 'phone' %}?brand=itel" class="mega-grid-item" style="font-weight: 800; color: #e3000f;">itel</a>
+                        <a href="{% url 'phone' %}?brand=HUAWEI" class="mega-grid-item" style="font-weight: 800; color: #cf0a2c;">HUAWEI</a>
+                        <a href="{% url 'phone' %}?brand=MEIZU" class="mega-grid-item" style="font-weight: 800; color: #00b4ff;">MEIZU</a>
+                        <a href="{% url 'phone' %}?brand=Infinix" class="mega-grid-item" style="font-weight: 800; color: #006600;">Infinix</a>
+                        <a href="{% url 'phone' %}?type=feature_phone" class="mega-grid-item" style="grid-column: span 2;">Điện thoại phổ thông</a>
+                    </div>
+                </div>
+                <div class="submenu-column" style="flex: 1;">
+                    <div class="submenu-title">Điện thoại HOT <i class="fa fa-bolt" style="color: #f39c12;"></i></div>
+                    <div class="mega-grid-2">
+                        <a href="#" class="mega-grid-item">iPhone 17 <span class="badge-hot-tag">Mới</span></a>
+                        <a href="#" class="mega-grid-item">iPhone Air</a>
+                        <a href="#" class="mega-grid-item">Galaxy S26 Ultra <span class="badge-hot-tag">Mới</span></a>
+                        <a href="#" class="mega-grid-item">OPPO Find X9</a>
+                        <a href="#" class="mega-grid-item">Xiaomi 17 Ultra</a>
+                        <a href="#" class="mega-grid-item">Galaxy Z Fold7</a>
+                    </div>
+                </div>
+                <div class="submenu-column" style="flex: 1.2;">
+                    <div class="submenu-title">Hãng máy tính bảng</div>
+                    <div class="mega-grid-3">
+                        <a href="{% url 'tablet' %}?brand=iPad" class="mega-grid-item" style="font-weight: 800; color: #000;">iPad</a>
+                        <a href="{% url 'tablet' %}?brand=Samsung" class="mega-grid-item" style="font-weight: 800; color: #1428a0;">SAMSUNG</a>
+                        <a href="{% url 'tablet' %}?brand=Xiaomi" class="mega-grid-item" style="font-weight: 800; color: #ff6900;">Xiaomi</a>
+                        <a href="{% url 'tablet' %}?brand=HUAWEI" class="mega-grid-item" style="font-weight: 800; color: #cf0a2c;">HUAWEI</a>
+                        <a href="{% url 'tablet' %}?brand=Lenovo" class="mega-grid-item" style="font-weight: 800; color: #e2231a;">Lenovo</a>
+                        <a href="{% url 'tablet' %}?brand=Teclast" class="mega-grid-item" style="font-weight: 800; color: #f48024;">TECLAST</a>
+                        <a href="{% url 'tablet' %}?brand=Nubia" class="mega-grid-item" style="font-weight: 800; color: #e51b23;">Nubia</a>
+                        <a href="{% url 'tablet' %}?brand=Honor" class="mega-grid-item" style="font-weight: 800; color: #000;">HONOR</a>
+                        <a href="{% url 'tablet' %}?brand=OPPO" class="mega-grid-item" style="font-weight: 800; color: #046a38;">OPPO</a>
+                        <a href="{% url 'tablet' %}?need=doc-sach" class="mega-grid-item">Máy đọc sách</a>
+                        <a href="{% url 'tablet' %}?brand=Kindle" class="mega-grid-item" style="font-weight: 800;">Kindle</a>
+                        <a href="{% url 'tablet' %}?brand=Boox" class="mega-grid-item" style="font-weight: 800;">BOOX</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li class="has-submenu">
+            <a href="{% url 'laptop' %}">
+                <div class="menu-item-left"><i class="fa fa-laptop" style="font-size: 18px;"></i> Laptop</div>
+                <i class="fa fa-angle-right"></i>
+            </a>
+            <div class="submenu-panel" style="width: 1000px; display: flex; gap: 20px;">
+                <div class="submenu-column" style="flex: 1.2;">
+                    <div class="submenu-title">Thương hiệu</div>
+                    <div class="mega-grid-3">
+                        <a href="{% url 'laptop' %}?brand=MacBook" class="mega-grid-item" style="font-weight: 800;">MacBook</a>
+                        <a href="{% url 'laptop' %}?brand=ASUS" class="mega-grid-item" style="font-weight: 800; color: #00539b;">ASUS</a>
+                        <a href="{% url 'laptop' %}?brand=Lenovo" class="mega-grid-item" style="font-weight: 800; color: #e2231a;">Lenovo</a>
+                        <a href="{% url 'laptop' %}?brand=DELL" class="mega-grid-item" style="font-weight: 800; color: #0076ce;">DELL</a>
+                        <a href="{% url 'laptop' %}?brand=HP" class="mega-grid-item" style="font-weight: 800; color: #0096d6;">HP</a>
+                        <a href="{% url 'laptop' %}?brand=acer" class="mega-grid-item" style="font-weight: 800; color: #83b817;">acer</a>
+                        <a href="{% url 'laptop' %}?brand=LG" class="mega-grid-item" style="font-weight: 800; color: #ea002a;">LG</a>
+                        <a href="{% url 'laptop' %}?brand=msi" class="mega-grid-item" style="font-weight: 800; color: #cc0000;">msi</a>
+                        <a href="{% url 'laptop' %}?brand=GIGABYTE" class="mega-grid-item" style="font-weight: 800; color: #000;">GIGABYTE</a>
+                        <a href="{% url 'laptop' %}?brand=Surface" class="mega-grid-item" style="font-weight: 800;">Surface</a>
+                        <a href="{% url 'laptop' %}?brand=Masstel" class="mega-grid-item" style="font-weight: 800; color: #e51b23;">Masstel</a>
+                        <a href="{% url 'laptop' %}?brand=SAMSUNG" class="mega-grid-item" style="font-weight: 800; color: #1428a0;">SAMSUNG</a>
+                    </div>
+                </div>
+                <div class="submenu-column" style="flex: 1;">
+                    <div class="submenu-title">Nhu cầu sử dụng</div>
+                    <div class="mega-grid-2">
+                        <a href="{% url 'laptop' %}?need=Văn phòng" class="mega-grid-item"><i class="fa fa-briefcase" style="color: #2196F3; margin-right: 5px;"></i> Văn phòng</a>
+                        <a href="{% url 'laptop' %}?need=Gaming" class="mega-grid-item"><i class="fa fa-gamepad" style="color: #f44336; margin-right: 5px;"></i> Gaming</a>
+                        <a href="{% url 'laptop' %}?need=Mỏng nhẹ" class="mega-grid-item"><i class="fa fa-leaf" style="color: #4CAF50; margin-right: 5px;"></i> Mỏng nhẹ</a>
+                        <a href="{% url 'laptop' %}?need=Đồ họa" class="mega-grid-item"><i class="fa fa-paint-brush" style="color: #9c27b0; margin-right: 5px;"></i> Đồ họa</a>
+                        <a href="{% url 'laptop' %}?need=Sinh viên" class="mega-grid-item"><i class="fa fa-graduation-cap" style="color: #ff9800; margin-right: 5px;"></i> Sinh viên</a>
+                        <a href="{% url 'laptop' %}?need=Cảm ứng" class="mega-grid-item"><i class="fa fa-hand-pointer-o" style="color: #607d8b; margin-right: 5px;"></i> Cảm ứng</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li class="has-submenu">
+            <a href="{% url 'earphone' %}">
+                <div class="menu-item-left"><i class="fa fa-headphones" style="font-size: 18px;"></i> Tai nghe</div>
+                <i class="fa fa-angle-right"></i>
+            </a>
+            <div class="submenu-panel" style="width: 1000px; display: flex; gap: 20px;">
+                <div class="submenu-column" style="flex: 1.2;">
+                    <div class="submenu-title">Hãng tai nghe</div>
+                    <div class="mega-grid-3">
+                        <a href="{% url 'earphone' %}?brand=Apple" class="mega-grid-item" style="font-weight: 800; color: #000;">Apple</a>
+                        <a href="{% url 'earphone' %}?brand=Sony" class="mega-grid-item" style="font-weight: 800; color: #000;">SONY</a>
+                        <a href="{% url 'earphone' %}?brand=JBL" class="mega-grid-item" style="font-weight: 800; color: #ff4500;">JBL</a>
+                        <a href="{% url 'earphone' %}?brand=Samsung" class="mega-grid-item" style="font-weight: 800; color: #1428a0;">SAMSUNG</a>
+                        <a href="{% url 'earphone' %}?brand=Marshall" class="mega-grid-item" style="font-weight: 800; color: #000;">Marshall</a>
+                        <a href="{% url 'earphone' %}?brand=Soundpeats" class="mega-grid-item" style="font-weight: 800; color: #333;">SOUNDPEATS</a>
+                        <a href="{% url 'earphone' %}?brand=Bose" class="mega-grid-item" style="font-weight: 800; color: #000;">BOSE</a>
+                        <a href="{% url 'earphone' %}?brand=Edifier" class="mega-grid-item" style="font-weight: 800; color: #1e88e5;">EDIFIER</a>
+                        <a href="{% url 'earphone' %}?brand=Xiaomi" class="mega-grid-item" style="font-weight: 800; color: #ff6900;">XIAOMI</a>
+                        <a href="{% url 'earphone' %}?brand=Huawei" class="mega-grid-item" style="font-weight: 800; color: #cf0a2c;">HUAWEI</a>
+                        <a href="{% url 'earphone' %}?brand=Sennheiser" class="mega-grid-item" style="font-weight: 800; color: #000;">SENNHEISER</a>
+                        <a href="{% url 'earphone' %}?brand=Havit" class="mega-grid-item" style="font-weight: 800; color: #d32f2f;">HAVIT</a>
+                    </div>
+                </div>
+                <div class="submenu-column" style="flex: 1;">
+                    <div class="submenu-title">Chọn loại tai nghe</div>
+                    <div class="mega-grid-2">
+                        <a href="{% url 'earphone' %}?need=bluetooth" class="mega-grid-item"><i class="fa fa-bluetooth" style="color: #2196F3; margin-right: 5px;"></i> Bluetooth</a>
+                        <a href="{% url 'earphone' %}?need=chup-tai" class="mega-grid-item"><i class="fa fa-headphones" style="color: #4CAF50; margin-right: 5px;"></i> Chụp tai</a>
+                        <a href="{% url 'earphone' %}?need=nhet-tai" class="mega-grid-item">Nhét tai</a>
+                        <a href="{% url 'earphone' %}?need=co-day" class="mega-grid-item">Có dây</a>
+                        <a href="{% url 'earphone' %}?need=the-thao" class="mega-grid-item">Thể thao</a>
+                        <a href="{% url 'earphone' %}?need=gaming" class="mega-grid-item"><i class="fa fa-gamepad" style="color: #f44336; margin-right: 5px;"></i> Gaming</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li class="has-submenu">
+            <div class="menu-row-wrapper">
+                <div class="menu-item-left">
+                    <i class="fa fa-clock-o" style="font-size: 18px;"></i>
+                    <div class="links-container">
+                        <a href="{% url 'watch' %}">Đồng hồ</a>,
+                        <a href="{% url 'camera' %}">Camera</a>
+                    </div>
+                </div>
+                <i class="fa fa-angle-right" style="color: #ccc; font-size: 16px;"></i>
+            </div>
+            <div class="submenu-panel" style="width: 1000px; display: flex; gap: 20px;">
+                <div class="submenu-column" style="flex: 1.2;">
+                    <div class="submenu-title">Chọn theo thương hiệu</div>
+                    <div class="mega-grid-3">
+                        <a href="{% url 'watch' %}?brand=Apple" class="mega-grid-item" style="font-weight: 800; color: #000;">Apple Watch</a>
+                        <a href="{% url 'watch' %}?brand=Samsung" class="mega-grid-item" style="font-weight: 800; color: #1428a0;">SAMSUNG</a>
+                        <a href="{% url 'watch' %}?brand=Xiaomi" class="mega-grid-item" style="font-weight: 800; color: #ff6900;">XIAOMI</a>
+                        <a href="{% url 'watch' %}?brand=Huawei" class="mega-grid-item" style="font-weight: 800; color: #cf0a2c;">HUAWEI</a>
+                        <a href="{% url 'watch' %}?brand=Coros" class="mega-grid-item" style="font-weight: 800; color: #555;">COROS</a>
+                        <a href="{% url 'watch' %}?brand=Garmin" class="mega-grid-item" style="font-weight: 800; color: #000;">GARMIN</a>
+                        <a href="{% url 'watch' %}?brand=Amazfit" class="mega-grid-item" style="font-weight: 800; color: #e91e63;">AMAZFIT</a>
+                        <a href="{% url 'watch' %}?brand=Kieslect" class="mega-grid-item" style="font-weight: 800; color: #ff9800;">KIESLECT</a>
+                    </div>
+                </div>
+                <div class="submenu-column" style="flex: 1.2;">
+                    <div class="submenu-title">Camera & Máy ảnh</div>
+                    <div class="mega-grid-2">
+                        <a href="{% url 'camera' %}?need=security" class="mega-grid-item" style="grid-column: span 2; display: flex; justify-content: flex-start; padding-left: 15px;"><i class="fa fa-video-camera" style="font-size: 20px; color: #333; margin-right: 15px;"></i> Camera an ninh</a>
+                        <a href="{% url 'camera' %}?need=dashcam" class="mega-grid-item"><i class="fa fa-car" style="color: #555; margin-right: 5px;"></i> Camera hành trình</a>
+                        <a href="{% url 'camera' %}?need=action" class="mega-grid-item"><i class="fa fa-camera-retro" style="color: #555; margin-right: 5px;"></i> Action Camera</a>
+                        <a href="{% url 'camera' %}?need=digital" class="mega-grid-item"><i class="fa fa-camera" style="color: #555; margin-right: 5px;"></i> Máy ảnh</a>
+                        <a href="{% url 'camera' %}?need=flycam" class="mega-grid-item"><i class="fa fa-plane" style="color: #555; margin-right: 5px;"></i> Flycam</a>
+                        <a href="{% url 'camera' %}?need=gimbal" class="mega-grid-item"><i class="fa fa-magic" style="color: #555; margin-right: 5px;"></i> Gimbal</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li class="has-submenu">
+            <a href="{% url 'accessory' %}">
+                <div class="menu-item-left"><i class="fa fa-plug" style="font-size: 18px;"></i> Phụ kiện</div>
+                <i class="fa fa-angle-right"></i>
+            </a>
+            <div class="submenu-panel" style="width: 1000px; display: flex; gap: 20px;">
+                <div class="submenu-column" style="flex: 1.2;">
+                    <div class="submenu-title">Phụ kiện di động</div>
+                    <div class="mega-grid-2">
+                        <a href="{% url 'accessory' %}?need=powerbank" class="mega-grid-item"><i class="fa fa-battery-full" style="color:#4CAF50; margin-right:10px;"></i> Pin sạc dự phòng</a>
+                        <a href="{% url 'accessory' %}?need=charger" class="mega-grid-item"><i class="fa fa-plug" style="color:#2196F3; margin-right:10px;"></i> Cáp, sạc</a>
+                        <a href="{% url 'accessory' %}?need=case" class="mega-grid-item"><i class="fa fa-mobile" style="color:#ff9800; margin-right:10px;"></i> Ốp lưng, bao da</a>
+                        <a href="{% url 'accessory' %}?need=screen_protector" class="mega-grid-item"><i class="fa fa-tablet" style="color:#9c27b0; margin-right:10px;"></i> Dán màn hình</a>
+                    </div>
+                </div>
+                <div class="submenu-column" style="flex: 1.2;">
+                    <div class="submenu-title">Thương hiệu phụ kiện</div>
+                    <div class="mega-grid-3">
+                        <a href="{% url 'accessory' %}?brand=Apple" class="mega-grid-item" style="font-weight: 800;">Apple</a>
+                        <a href="{% url 'accessory' %}?brand=Anker" class="mega-grid-item" style="font-weight: 800; color: #0277bd;">Anker</a>
+                        <a href="{% url 'accessory' %}?brand=Baseus" class="mega-grid-item" style="font-weight: 800; color: #ffeb3b; background:#000!important; border-color:#000!important;">Baseus</a>
+                        <a href="{% url 'accessory' %}?brand=Ugreen" class="mega-grid-item" style="font-weight: 800; color: #e53935;">Ugreen</a>
+                        <a href="{% url 'accessory' %}?brand=Logitech" class="mega-grid-item" style="font-weight: 800; color: #1e88e5;">Logitech</a>
+                        <a href="{% url 'accessory' %}?brand=Xiaomi" class="mega-grid-item" style="font-weight: 800; color: #ff6900;">Xiaomi</a>
+                    </div>
+                </div>
+            </div>
+        </li>
+
+        <li class="has-submenu">
+            <a href="#">
+                <div class="menu-item-left"><i class="fa fa-newspaper-o" style="font-size: 18px;"></i> Tin công nghệ</div>
+                <i class="fa fa-angle-right"></i>
+            </a>
+            <div class="submenu-panel" style="width: 700px; display: flex; gap: 20px;">
+                <div class="submenu-column" style="flex: 1;">
+                    <div class="submenu-title">Chuyên mục tin tức</div>
+                    <div class="mega-grid-1" style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                        <a href="#" class="mega-grid-item" style="justify-content: flex-start; padding-left:15px;"><i class="fa fa-bolt" style="color:#f39c12; margin-right:10px;"></i> Tin tức mới nhất</a>
+                        <a href="#" class="mega-grid-item" style="justify-content: flex-start; padding-left:15px;"><i class="fa fa-search" style="color:#2196F3; margin-right:10px;"></i> Đánh giá sản phẩm</a>
+                        <a href="#" class="mega-grid-item" style="justify-content: flex-start; padding-left:15px;"><i class="fa fa-lightbulb-o" style="color:#4CAF50; margin-right:10px;"></i> Mẹo vặt - Thủ thuật</a>
+                    </div>
+                </div>
+                <div class="submenu-column" style="flex: 1.5;">
+                    <div class="submenu-title">Bài viết nổi bật</div>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                        <a href="#" style="display:flex; gap:15px; text-decoration:none; color:#333; align-items:center; background:#f9f9f9; padding:10px; border-radius:8px; transition:0.2s;" onmouseover="this.style.background='#fffafb'; this.style.color='#D10024'" onmouseout="this.style.background='#f9f9f9'; this.style.color='#333'">
+                            <span style="font-weight:600; font-size:13px; line-height:1.4;">Rò rỉ thiết kế mới nhất của iPhone 16 Pro Max: Màn hình lớn hơn, viền siêu mỏng!</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
