@@ -1,0 +1,389 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Giỏ hàng của bạn</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/bootstrap.min.css' %}" />
+    <link type="text/css" rel="stylesheet" href="{% static 'home/css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'home/css/font-awesome.min.css' %}">
+    <style>
+        body {
+            background-color: #f4f6f8 !important;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            margin-top: -15px;
+        }
+
+        .cart-table th {
+            background: transparent;
+            padding: 10px 15px;
+            border: none;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .cart-table td {
+            background: #fff;
+            padding: 20px 15px;
+            vertical-align: middle;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .cart-table td:first-child {
+            border-left: 1px solid #eee;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .cart-table td:last-child {
+            border-right: 1px solid #eee;
+            border-radius: 0 12px 12px 0;
+        }
+
+        /* Checkbox Custom */
+        .custom-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #D10024;
+        }
+
+        /* Nút số lượng */
+        .qty-btn {
+            background: #f4f6f8;
+            border: 1px solid #ddd;
+            padding: 5px 12px;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* Nút xóa nhiều */
+        .btn-bulk-delete {
+            background: transparent;
+            border: 1px solid #D10024;
+            color: #D10024;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .btn-bulk-delete:hover {
+            background: #fff1f1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="top-header" style="background: #1E1F29; padding: 10px 0;">
+        <div class="container">
+            <ul class="header-links pull-right" style="list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; align-items: center;">
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'profile' %}" style="color: #fff; text-decoration: none;"><i class="fa fa-user" style="color: #D10024;"></i> Xin chào, {{ user.username }}</a></li>
+                <li>
+                    <form action="{% url 'logout' %}" method="POST" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: transparent; border: none; color: #fff; padding: 0; outline: none; cursor: pointer;">
+                            <i class="fa fa-sign-out" style="color: #D10024;"></i> Đăng xuất
+                        </button>
+                    </form>
+                </li>
+                {% else %}
+                <li><a href="{% url 'login' %}" style="color: #fff; text-decoration: none;"><i class="fa fa-sign-in" style="color: #D10024;"></i> Đăng nhập</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <header>
+        <div id="header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="header-logo">
+                            <a href="/" class="logo"><img src="{% static 'home/img/logo.png' %}" alt=""></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="section">
+        <div class="container">
+
+            {% if messages %}
+            <div class="row">
+                <div class="col-md-12">
+                    {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" role="alert" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong><i class="fa fa-exclamation-triangle"></i> Thông báo:</strong> {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="section-title" style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <h3 class="title" style="margin: 0;">Giỏ hàng của bạn</h3>
+                        <button id="bulk-delete-btn" class="btn-bulk-delete" style="display: none;"><i class="fa fa-trash"></i> Xóa mục đã chọn</button>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px; text-align: center;"><input type="checkbox" id="select-all" class="custom-checkbox" checked></th>
+                                <th colspan="2">Sản phẩm</th>
+                                <th>Đơn giá</th>
+                                <th style="text-align: center;">Số lượng</th>
+                                <th style="text-align: right;">Thành tiền</th>
+                                <th style="text-align: center;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr class="cart-row">
+                                <td style="text-align: center;">
+                                    <input type="checkbox" class="item-checkbox custom-checkbox" data-product="{{item.product.id}}" data-price="{{item.get_total}}" data-qty="{{item.quantity}}" checked>
+                                </td>
+                                <td style="width: 80px; border-right: none; padding-right: 0;">
+                                    {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" style="width: 70px; object-fit: contain;">
+                                    {% else %}
+                                    <img src="{% static 'home/img/no-image.png' %}" style="width: 70px;">
+                                    {% endif %}
+                                </td>
+                                <td style="border-left: none;">
+                                    <h5 style="margin: 0; font-size: 14px; font-weight: 600;">{{ item.product.name }}</h5>
+                                </td>
+                                <td style="color: #666; font-size: 14px;">{{ item.product.price|intcomma }}đ</td>
+
+                                <td>
+                                    <div style="display: flex; justify-content: center; align-items: center; gap: 15px;">
+                                        <button class="update-cart qty-btn" data-product="{{item.product.id}}" data-action="remove">-</button>
+                                        <span id="qty-{{item.product.id}}" style="font-weight: 700; font-size: 15px; width: 20px; text-align: center;">{{item.quantity}}</span>
+                                        <button class="update-cart qty-btn" data-product="{{item.product.id}}" data-action="add">+</button>
+                                    </div>
+                                </td>
+
+                                <td style="color: #D10024; font-weight: bold; font-size: 16px; text-align: right;" id="item-total-{{item.product.id}}">
+                                    {{ item.get_total|intcomma }}đ
+                                </td>
+
+                                <td style="text-align: center;">
+                                    <button class="update-cart" data-product="{{item.product.id}}" data-action="delete" style="background: transparent; border: none; color: #999; cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#D10024'" onmouseout="this.style.color='#999'" title="Xóa sản phẩm">
+                                        <i class="fa fa-trash fa-lg"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            {% if not items %}
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 50px;">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/7466/7466073.png" style="width: 100px; margin-bottom: 15px;">
+                                    <p>Giỏ hàng của bạn đang trống.</p>
+                                    <a href="/" class="primary-btn" style="border-radius: 5px; text-decoration: none;">Mua sắm ngay</a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if items %}
+                <div class="col-md-5 col-md-offset-7">
+                    <div class="cart-summary" style="background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #eee;">
+                        <h3 style="margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 15px;">Tổng thanh toán</h3>
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px;">
+                            <span style="font-size: 15px; color: #555;" id="cart-total-items">Đang chọn: {{ order.get_cart_items }} sản phẩm</span>
+                            <h3 id="cart-total-price" style="color: #D10024; margin: 0;">{{ order.get_cart_total|intcomma }}đ</h3>
+                        </div>
+
+                        <form action="{% url 'checkout' %}" method="GET" id="checkout-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="selected_items" id="selected_items_input">
+                            <button type="submit" id="checkout-btn" class="primary-btn" style="width: 100%; margin-top: 20px; font-size: 16px; font-weight: bold; border-radius: 8px; padding: 12px;">MUA HÀNG NGAY</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'home/js/jquery.min.js' %}"></script>
+    <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'home/js/main.js' %}"></script>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // Hàm tính toán lại tổng tiền dựa trên các Checkbox đang được chọn
+        function updateSelectedTotal() {
+            let totalMoney = 0;
+            let totalQty = 0;
+            let selectedIds = [];
+            const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+
+            checkboxes.forEach(cb => {
+                let rawPrice = cb.getAttribute('data-price').toString().replace(/[.,]/g, '');
+                totalMoney += parseInt(rawPrice);
+                totalQty += parseInt(cb.getAttribute('data-qty'));
+                selectedIds.push(cb.getAttribute('data-product'));
+            });
+
+            document.getElementById('cart-total-price').innerText = totalMoney.toLocaleString('vi-VN') + 'đ';
+            document.getElementById('cart-total-items').innerText = 'Đang chọn: ' + totalQty + ' sản phẩm';
+
+            document.getElementById('selected_items_input').value = selectedIds.join(',');
+
+            localStorage.setItem('cartSavedSelection', JSON.stringify(selectedIds));
+
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+
+            if (totalQty === 0) {
+                checkoutBtn.style.opacity = '0.5';
+                checkoutBtn.style.pointerEvents = 'none';
+                bulkDeleteBtn.style.display = 'none';
+            } else {
+                checkoutBtn.style.opacity = '1';
+                checkoutBtn.style.pointerEvents = 'auto';
+                bulkDeleteBtn.style.display = 'block';
+            }
+        }
+
+        function restoreSelection() {
+            const saved = localStorage.getItem('cartSavedSelection');
+            if (saved !== null) {
+                const selectedIds = JSON.parse(saved);
+                document.querySelectorAll('.item-checkbox').forEach(cb => {
+                    // Kiểm tra xem ID của món này có nằm trong danh sách đã lưu không
+                    cb.checked = selectedIds.includes(cb.getAttribute('data-product'));
+                });
+
+                // Chọn tất cả
+                const allCheckboxes = document.querySelectorAll('.item-checkbox');
+                const allChecked = document.querySelectorAll('.item-checkbox:checked');
+                const selectAllBtn = document.getElementById('select-all');
+                if (selectAllBtn && allCheckboxes.length > 0) {
+                    selectAllBtn.checked = (allCheckboxes.length === allChecked.length);
+                }
+            }
+        }
+
+        //Chọn tất cả
+        const selectAllCheckbox = document.getElementById('select-all');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = this.checked);
+                updateSelectedTotal();
+            });
+        }
+
+        // chọn từng dòng
+        document.querySelectorAll('.item-checkbox').forEach(cb => {
+            cb.addEventListener('change', function () {
+                const allCheckboxes = document.querySelectorAll('.item-checkbox');
+                const allChecked = document.querySelectorAll('.item-checkbox:checked');
+                document.getElementById('select-all').checked = (allCheckboxes.length === allChecked.length);
+                updateSelectedTotal();
+            });
+        });
+
+        // Cộng/Trừ/Xóa
+        document.querySelectorAll('.update-cart').forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product');
+                const action = this.getAttribute('data-action');
+                const url = '/update_item/';
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({ 'productId': productId, 'action': action })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (action === 'delete' || data.item_quantity <= 0) {
+                            location.reload();
+                        } else {
+                            document.getElementById(`qty-${productId}`).innerText = data.item_quantity;
+                            document.getElementById(`item-total-${productId}`).innerText = data.item_total.toLocaleString('vi-VN') + 'đ';
+
+                            const checkbox = document.querySelector(`.item-checkbox[data-product="${productId}"]`);
+                            if (checkbox) {
+                                checkbox.setAttribute('data-qty', data.item_quantity);
+                                checkbox.setAttribute('data-price', data.item_total);
+                            }
+                            updateSelectedTotal();
+                        }
+                    })
+                    .catch(error => console.log('Lỗi AJAX:', error));
+            });
+        });
+
+        // Xóa các mục đã chọn
+        const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+        if (bulkDeleteBtn) {
+            bulkDeleteBtn.addEventListener('click', async function () {
+                if (confirm('Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?')) {
+                    const selectedCheckboxes = document.querySelectorAll('.item-checkbox:checked');
+                    for (let cb of selectedCheckboxes) {
+                        const productId = cb.getAttribute('data-product');
+                        await fetch('/update_item/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                            body: JSON.stringify({ 'productId': productId, 'action': 'delete' })
+                        });
+                    }
+                    location.reload();
+                }
+            });
+        }
+
+        restoreSelection();
+        updateSelectedTotal();
+    </script>
+</body>
+
+</html>
